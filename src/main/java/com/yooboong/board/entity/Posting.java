@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor // JPA는 기본생성자로 객체를 생성하므로 반드시 선언
@@ -22,6 +23,9 @@ public class Posting {
     @Column
     private String content;
 
+    @OneToMany(mappedBy = "posting", cascade = CascadeType.REMOVE)
+    private List<Comment> commentList;
+
     public static Posting toEntity(PostingDto postingDto) {
         if (postingDto.getId() != null) // 게시글 생성시 id는 null이어야 함
             throw new IllegalArgumentException("게시글 생성 실패! 게시글 생성시 id가 null이 아님");
@@ -29,7 +33,8 @@ public class Posting {
         return new Posting(
                 postingDto.getId(),
                 postingDto.getTitle(),
-                postingDto.getContent());
+                postingDto.getContent(),
+                null);
     }
 
     public void patch(PostingDto postingDto) { // 게시글 수정
