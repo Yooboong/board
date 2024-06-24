@@ -24,7 +24,7 @@ public class Posting {
 
     public static Posting toEntity(PostingDto postingDto) {
         if (postingDto.getId() != null) // 게시글 생성시 id는 null이어야 함
-            throw new IllegalArgumentException("게시글 생성시 id가 null이 아님");
+            throw new IllegalArgumentException("게시글 생성 실패! 게시글 생성시 id가 null이 아님");
 
         return new Posting(
                 postingDto.getId(),
@@ -34,7 +34,7 @@ public class Posting {
 
     public void patch(PostingDto postingDto) { // 게시글 수정
         if (postingDto.getId() != this.id)
-            throw new IllegalArgumentException("수정할 게시글의 id가 일치하지 않음");
+            throw new IllegalArgumentException("게시글 수정 실패! 수정할 게시글의 id가 일치하지 않음");
         if (postingDto.getTitle() != null)
             this.title = postingDto.getTitle();
         if (postingDto.getContent() != null)

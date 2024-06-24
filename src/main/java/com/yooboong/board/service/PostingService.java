@@ -39,7 +39,7 @@ public class PostingService {
     public PostingDto read(Long id) {
         Posting posting = postingRepository.findById(id).orElse(null);
         if (posting == null)
-            return null;
+            throw new IllegalArgumentException("게시글 조회 실패! 해당하는 id의 게시물이 존재하지 않음");
 
         PostingDto postingDto = PostingDto.toDto(posting);
         return postingDto;
@@ -48,6 +48,8 @@ public class PostingService {
     @Transactional
     public PostingDto update(PostingDto postingDto) {
         Posting target = postingRepository.findById(postingDto.getId()).orElse(null);
+        if (target == null)
+            throw new IllegalArgumentException("게시글 수정 실패! 해당하는 id의 게시물이 존재하지 않음");
 
         target.patch(postingDto);
 
@@ -61,7 +63,7 @@ public class PostingService {
     public PostingDto delete(Long id) {
         Posting target = postingRepository.findById(id).orElse(null);
         if (target == null)
-            return null;
+            throw new IllegalArgumentException("게시글 삭제 실패! 해당하는 id의 게시물이 존재하지 않음");
 
         postingRepository.delete(target);
 

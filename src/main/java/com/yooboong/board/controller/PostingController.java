@@ -1,6 +1,8 @@
 package com.yooboong.board.controller;
 
+import com.yooboong.board.dto.CommentDto;
 import com.yooboong.board.dto.PostingDto;
+import com.yooboong.board.service.CommentService;
 import com.yooboong.board.service.PostingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -15,6 +17,8 @@ import java.util.List;
 public class PostingController {
 
     private final PostingService postingService; // lombok을 사용한 생성자 주입시 final 추가
+
+    private final CommentService commentService;
 
     @GetMapping("/") // 게시판 전체 글 조회 (메인 페이지)
     public String readAll(Model model) {
@@ -47,8 +51,10 @@ public class PostingController {
     public String show(@PathVariable("id") Long id,
                        Model model) {
         PostingDto postingDto = postingService.read(id);
+        List<CommentDto> commentDtos = commentService.readAll(id);
 
         model.addAttribute("postingDto", postingDto);
+        model.addAttribute("commentDtos", commentDtos);
         return "posting/show";
     }
 

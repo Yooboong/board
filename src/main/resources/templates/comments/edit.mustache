@@ -1,0 +1,16 @@
+{{>layout/header}}
+
+{{#commentDto}}
+    <form class="container" action="/comment/update" method="post">
+        <input name="id" type="hidden" value="{{id}}">
+        <input name="postingId" type="hidden" value="{{postingId}}">
+        <div class="mb-3">
+            <label class="form-label">내용</label>
+            <textarea class="form-control" rows="3" name="comment">{{comment}}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">수정 완료</button>
+        <a href="/posting/{{postingId}}" class="btn btn-danger">Back</a>
+    </form>
+{{/commentDto}}
+
+{{>layout/footer}}
