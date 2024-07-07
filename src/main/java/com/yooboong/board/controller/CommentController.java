@@ -51,9 +51,9 @@ public class CommentController {
 
     @GetMapping("/comment/{id}/delete")
     public String delete(@PathVariable("id") Long id) {
-        Long deletedPostingId = commentService.delete(id);
+        Long deletedCommentPostingId = commentService.delete(id);
 
-        return "redirect:/posting/" + deletedPostingId;
+        return "redirect:/posting/" + deletedCommentPostingId;
     }
 
 }

@@ -75,8 +75,8 @@ public class CommentService {
 
         commentRepository.delete(target);
 
-        Long deletedPostingId = target.getPosting().getId();
-        return deletedPostingId;
+        Long deletedCommentPostingId = target.getPosting().getId();
+        return deletedCommentPostingId;
     }
 
 }
