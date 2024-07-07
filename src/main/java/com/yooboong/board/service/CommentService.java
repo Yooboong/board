@@ -38,10 +38,10 @@ public class CommentService {
 
         Comment commentEntity = Comment.toEntity(target, commentDto);
 
-        Comment saved = commentRepository.save(commentEntity);
+        Comment created = commentRepository.save(commentEntity);
 
-        CommentDto savedDto = CommentDto.toDto(saved);
-        return savedDto;
+        CommentDto createdDto = CommentDto.toDto(created);
+        return createdDto;
     }
 
     public CommentDto read(Long id) {
@@ -59,7 +59,7 @@ public class CommentService {
         if (target == null)
             throw new IllegalArgumentException("댓글 수정 실패! 해당하는 id의 댓글이 존재하지 않음");
 
-        target.patch(commentDto);
+        target.update(commentDto);
 
         Comment updated = commentRepository.save(target);
 
@@ -68,15 +68,15 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentDto delete(Long id) {
+    public Long delete(Long id) {
         Comment target = commentRepository.findById(id).orElse(null);
         if (target == null)
             throw new IllegalArgumentException("댓글 삭제 실패! 해당하는 id의 댓글이 존재하지 않음");
 
         commentRepository.delete(target);
 
-        CommentDto deletedDto = CommentDto.toDto(target);
-        return deletedDto;
+        Long deletedPostingId = target.getPosting().getId();
+        return deletedPostingId;
     }
 
 }

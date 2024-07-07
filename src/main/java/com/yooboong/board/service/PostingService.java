@@ -28,9 +28,9 @@ public class PostingService {
 
     @Transactional
     public PostingDto create(PostingDto postingDto) {
-        Posting posting = Posting.toEntity(postingDto);
+        Posting postingEntity = Posting.toEntity(postingDto);
 
-        Posting created = postingRepository.save(posting);
+        Posting created = postingRepository.save(postingEntity);
 
         PostingDto createdDto = PostingDto.toDto(created);
         return createdDto;
@@ -46,12 +46,12 @@ public class PostingService {
     }
 
     @Transactional
-    public PostingDto update(PostingDto postingDto) {
-        Posting target = postingRepository.findById(postingDto.getId()).orElse(null);
+    public PostingDto update(Long id, PostingDto postingDto) {
+        Posting target = postingRepository.findById(id).orElse(null);
         if (target == null)
             throw new IllegalArgumentException("게시글 수정 실패! 해당하는 id의 게시물이 존재하지 않음");
 
-        target.patch(postingDto);
+        target.update(postingDto);
 
         Posting updated = postingRepository.save(target);
 
@@ -60,14 +60,12 @@ public class PostingService {
     }
 
     @Transactional
-    public PostingDto delete(Long id) {
+    public void delete(Long id) {
         Posting target = postingRepository.findById(id).orElse(null);
         if (target == null)
             throw new IllegalArgumentException("게시글 삭제 실패! 해당하는 id의 게시물이 존재하지 않음");
 
         postingRepository.delete(target);
-
-        PostingDto deletedDto = PostingDto.toDto(target);
-        return deletedDto;
     }
+
 }

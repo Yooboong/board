@@ -16,14 +16,13 @@ public class CommentController {
     @PostMapping("/posting/{postingId}/create")
     public String create(@PathVariable("postingId") Long postingId,
                          @RequestParam("comment") String comment) {
-        CommentDto input = new CommentDto(
-                null,
-                postingId,
-                comment
-        );
+        CommentDto input = CommentDto.builder()
+                .postingId(postingId)
+                .comment(comment)
+                .build();
 
         CommentDto created = commentService.create(postingId, input);
-        return "redirect:/posting/" + created.getPostingId();
+        return "redirect:/posting/" + postingId;
     }
 
     @GetMapping("/comment/{id}/edit")
@@ -35,26 +34,26 @@ public class CommentController {
         return "comments/edit";
     }
 
-    @PostMapping("/comment/update")
-    public String update(@RequestParam("id") Long id,
+    @PostMapping("/comment/{id}/update")
+    public String update(@PathVariable("id") Long id,
                          @RequestParam("postingId") Long postingId,
                          @RequestParam("comment") String comment) {
-        CommentDto commentDto = new CommentDto(
-                id,
-                postingId,
-                comment
-        );
+        CommentDto commentDto = CommentDto.builder()
+                .id(id)
+                .postingId(postingId)
+                .comment(comment)
+                .build();
 
         CommentDto updated = commentService.update(id, commentDto);
 
-        return "redirect:/posting/" + updated.getPostingId();
+        return "redirect:/posting/" + postingId;
     }
 
     @GetMapping("/comment/{id}/delete")
     public String delete(@PathVariable("id") Long id) {
-        CommentDto deleted = commentService.delete(id);
+        Long deletedPostingId = commentService.delete(id);
 
-        return "redirect:/posting/" + deleted.getPostingId();
+        return "redirect:/posting/" + deletedPostingId;
     }
 
 }
