@@ -13,7 +13,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Getter
-public class Comment {
+public class Comment extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

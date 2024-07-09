@@ -19,6 +19,8 @@ public class PostingDto {
 
     private List<CommentDto> commentDtoList;
 
+    private String createdDate, modifiedDate;
+
     public static PostingDto toDto(Posting entity) {
         // List<Comment> 를 List<CommentDto>로 변환
         List<Comment> commentList = entity.getCommentList();
@@ -35,6 +37,8 @@ public class PostingDto {
                 .title(entity.getTitle())
                 .content(entity.getContent())
                 .commentDtoList(commentDtos)
+                .createdDate(entity.getCreatedDate())
+                .modifiedDate(entity.getModifiedDate())
                 .build();
     }
 }
