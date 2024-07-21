@@ -17,9 +17,9 @@ import java.util.List;
 public class PostingController {
 
     private final PostingService postingService; // lombok을 사용한 생성자 주입시 final 추가
-//    private final CommentService commentService;
+
     @GetMapping("/") // 게시판 전체 글 조회 (메인 페이지)
-    public String readAll(Model model) {
+    public String mainPage(Model model) {
         List<PostingDto> postingDtos = postingService.readAll();
 
         model.addAttribute("postingDtos", postingDtos);
@@ -27,7 +27,7 @@ public class PostingController {
     }
 
     @GetMapping("/new") // 글 생성 버튼 눌렀을 때
-    public String toNew() {
+    public String createForm() {
         return "posting/new"; // 글 생성 페이지로 이동
     }
 
@@ -49,15 +49,13 @@ public class PostingController {
     public String show(@PathVariable("id") Long id,
                        Model model) {
         PostingDto postingDto = postingService.read(id);
-//        List<CommentDto> commentDtos = commentService.readAll(id);
 
         model.addAttribute("postingDto", postingDto);
-//        model.addAttribute("commentDto", commentDtos);
         return "posting/show";
     }
 
     @GetMapping("/{id}/edit") // 수정 시작
-    public String edit(@PathVariable("id") Long id,
+    public String editForm(@PathVariable("id") Long id,
                        Model model) {
         // 수정할 데이터 가져오기
         PostingDto target = postingService.read(id);
@@ -66,8 +64,8 @@ public class PostingController {
         return "/posting/edit";
     }
 
-    @PostMapping("/{id}/update") // 수정
-    public String update(@PathVariable("id") Long id,
+    @PostMapping("/update") // 수정
+    public String update(@RequestParam("id") Long id,
                          @RequestParam("title") String title,
                          @RequestParam("content") String content) {
         PostingDto input = PostingDto.builder()

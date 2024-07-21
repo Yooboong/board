@@ -30,7 +30,6 @@ public class Posting extends BaseTimeEntity {
 
     public static Posting toEntity(PostingDto postingDto) {
         return Posting.builder()
-                .id(postingDto.getId())
                 .title(postingDto.getTitle())
                 .content(postingDto.getContent())
                 .build();

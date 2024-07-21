@@ -17,9 +17,9 @@ public class PostingService {
     private final PostingRepository postingRepository;
 
     public List<PostingDto> readAll() {
-        List<Posting> postingEntities = postingRepository.findAll();
+        List<Posting> postings = postingRepository.findAll();
 
-        List<PostingDto> postingDtos = postingEntities.stream()
+        List<PostingDto> postingDtos = postings.stream()
                 .map(entity -> PostingDto.toDto(entity))
                 .collect(Collectors.toList());
 

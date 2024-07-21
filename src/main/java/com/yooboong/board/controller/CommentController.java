@@ -9,12 +9,13 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/comment")
 public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping("/posting/{postingId}/create")
-    public String create(@PathVariable("postingId") Long postingId,
+    @PostMapping("/create")
+    public String create(@RequestParam("postingId") Long postingId,
                          @RequestParam("comment") String comment) {
         CommentDto input = CommentDto.builder()
                 .postingId(postingId)
@@ -25,7 +26,7 @@ public class CommentController {
         return "redirect:/posting/" + postingId;
     }
 
-    @GetMapping("/comment/{id}/edit")
+    @GetMapping("/{id}/edit")
     public String edit(@PathVariable("id") Long id,
                        Model model) {
         CommentDto commentDto = commentService.read(id);
@@ -34,22 +35,22 @@ public class CommentController {
         return "comments/edit";
     }
 
-    @PostMapping("/comment/{id}/update")
-    public String update(@PathVariable("id") Long id,
-                         @RequestParam("postingId") Long postingId,
+    @PostMapping("/update")
+    public String update(@RequestParam("id") Long id,
                          @RequestParam("comment") String comment) {
         CommentDto commentDto = CommentDto.builder()
                 .id(id)
-                .postingId(postingId)
                 .comment(comment)
                 .build();
 
         CommentDto updated = commentService.update(id, commentDto);
 
+        Long postingId = updated.getPostingId();
+
         return "redirect:/posting/" + postingId;
     }
 
-    @GetMapping("/comment/{id}/delete")
+    @GetMapping("/{id}/delete")
     public String delete(@PathVariable("id") Long id) {
         Long deletedCommentPostingId = commentService.delete(id);
 
