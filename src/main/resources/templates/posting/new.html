@@ -1,0 +1,19 @@
+<html layout:decorate="~{/layout/layout}">
+<div layout:fragment="content">
+
+    <form action="/posting/create" method="post">
+        <div>
+            <label>제목</label>
+            <input type="text" name="title">
+        </div>
+        <div>
+            <label>내용</label>
+            <textarea rows="3" name="content"></textarea>
+        </div>
+        <input type="submit" value="저장">
+        <input type="reset" value="다시쓰기">
+        <input type="button" value="취소" th:onclick="|location.href='/'|">
+    </form>
+
+</div>
+</html>

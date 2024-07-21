@@ -1,0 +1,24 @@
+<html layout:decorate="~{/layout/layout}">
+<div layout:fragment="content">
+
+    <table>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+<!--            <th>작성자</th>-->
+            <th>작성일</th>
+<!--            <th>조회수</th>-->
+        </tr>
+        <tr th:each="posting : ${postingDtos}">
+            <td th:text="${posting.id}"></td>
+            <td><a th:text="${posting.title}" th:href="@{'/posting/'+${posting.id}}"></a></td>
+<!--            <td th:text="${posting.userId}"></td>-->
+            <td th:if="${posting.createdDate}" th:text="${posting.createdDate}"></td>
+<!--            <td th:text="${posting.viewCnt}"></td>-->
+        </tr>
+    </table>
+
+    <input type="button" value="글쓰기" th:onclick="|location.href='/posting/new'|">
+
+</div>
+</html>

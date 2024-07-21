@@ -1,0 +1,20 @@
+<html layout:decorate="~{/layout/layout}">
+<div layout:fragment="content">
+
+    <form action="/posting/update" method="post">
+        <input type="hidden" name="id" th:value="${postingDto.id}">
+        <div>
+            <label>제목</label>
+            <input type="text" name="title" th:value="${postingDto.title}">
+        </div>
+        <div>
+            <label>내용</label>
+            <textarea rows="3" name="content" th:text="${postingDto.content}"></textarea>
+        </div>
+        <input type="submit" value="저장">
+        <input type="reset" value="다시쓰기">
+        <input type="button" value="취소" th:onclick="|location.href='/posting/'+${postingDto.id}|">
+    </form>
+
+</div>
+</html>

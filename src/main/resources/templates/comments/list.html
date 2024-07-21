@@ -1,0 +1,9 @@
+<div th:fragment="commentList">
+
+    <div th:each="comment : ${postingDto.commentDtoList}">
+        <div th:text="${comment.comment}"></div>
+        <input type="button" value="수정" th:onclick="|location.href='/comment/'+${comment.id}+'/edit'|">
+        <input type="button" value="삭제" th:onclick="|location.href='/comment/'+${comment.id}+'/delete'|">
+    </div>
+
+</div>

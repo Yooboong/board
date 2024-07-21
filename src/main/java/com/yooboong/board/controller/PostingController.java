@@ -23,7 +23,7 @@ public class PostingController {
         List<PostingDto> postingDtos = postingService.readAll();
 
         model.addAttribute("postingDtos", postingDtos);
-        return "posting/mainpage";
+        return "mainpage";
     }
 
     @GetMapping("/new") // 글 생성 버튼 눌렀을 때

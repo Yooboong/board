@@ -1,0 +1,31 @@
+<html layout:decorate="~{/layout/layout}">
+<div layout:fragment="content">
+
+    <table>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>내용</th>
+            <!--            <th>작성자</th>-->
+            <th>작성일</th>
+            <!--            <th>조회수</th>-->
+        </tr>
+        <tr>
+            <td th:text="${postingDto.id}"></td>
+            <td th:text="${postingDto.title}"></td>
+            <td th:text="${postingDto.content}"></td>
+            <!--            <td th:text="${postingDto.userId}"></td>-->
+            <td th:if="${postingDto.createdDate}" th:text="${postingDto.createdDate}"></td>
+            <!--            <td th:text="${postingDto.viewCnt}"></td>-->
+        </tr>
+    </table>
+
+    <input type="button" value="수정" th:onclick="|location.href='/posting/'+${postingDto.id}+'/edit'|">
+    <input type="button" value="삭제" th:onclick="|location.href='/posting/'+${postingDto.id}+'/delete'|">
+    <input type="button" value="목록으로" th:onclick="|location.href='/'|">
+
+    <th:block th:replace="/comments/new :: newComment"></th:block>
+    <th:block th:replace="/comments/list :: commentList"></th:block>
+
+</div>
+</html>

@@ -1,0 +1,17 @@
+<html layout:decorate="~{/layout/layout}">
+<div layout:fragment="content">
+
+    <form action="/comment/update" method="post">
+        <input type="hidden" name="id" th:value="${commentDto.id}">
+        <input type="hidden" name="postingId" th:value="${commentDto.postingId}">
+        <div>
+            <label>댓글 내용</label>
+            <textarea rows="3" name="comment" th:text="${commentDto.comment}"></textarea>
+        </div>
+        <input type="submit" value="수정완료">
+        <input type="reset" value="다시쓰기">
+        <input type="button" value="취소" th:onclick="|location.href='/posting/'+${commentDto.postingId}|">
+    </form>
+
+</div>
+</html>
