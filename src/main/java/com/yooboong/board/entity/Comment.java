@@ -22,7 +22,7 @@ public class Comment extends BaseTimeEntity {
     @JoinColumn(name = "posting_id")
     private Posting posting;
 
-    @Column
+    @Column(nullable = false)
     private String comment;
 
     public static Comment toEntity(Posting posting, CommentDto commentDto) {

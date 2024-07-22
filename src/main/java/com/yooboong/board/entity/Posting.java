@@ -19,10 +19,10 @@ public class Posting extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String title;
 
-    @Column
+    @Column(nullable = false)
     private String content;
 
     @OneToMany(mappedBy = "posting", cascade = CascadeType.REMOVE)

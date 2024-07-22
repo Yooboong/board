@@ -1,10 +1,11 @@
 <div th:fragment="header">
-    <header>
-        <h1>YS Board</h1>
+    <header id="header">
+        <h1>YS Board</a></h1>
     </header>
-    <nav>
-        <ul>
-            <li><a th:href="@{/}">홈</a></li>
+    <nav id="nav">
+        <a href="/">홈</a>
+<!--        <ul>-->
+<!--            <li><a th:href="@{/}">홈</a></li>-->
 <!--            <li th:each="board : ${menu}"><a th:href="'/board/' + ${board.board_no}" th:text="${board.board_name}"></a></li>-->
             <!-- <li><a th:href="@{/board}">게시판</a></li> -->
 <!--            <li th:if="${#authorization.expression('hasRole(''USER'')')}"><a th:href="@{/member}">회원정보</a></li>-->
@@ -13,6 +14,6 @@
 <!--            <li sec:authorize="isAuthenticated()"><a th:href="@{/logout}">로그아웃</a></li>-->
 <!--            <li sec:authorize="isAnonymous()"><a th:href="@{/login}">로그인</a></li>-->
 <!--            <li sec:authorize="isAnonymous()"><a th:href="@{/join}">회원가입</a></li>-->
-        </ul>
+<!--        </ul>-->
     </nav>
 </div>
