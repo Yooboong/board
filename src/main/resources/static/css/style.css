@@ -12,7 +12,7 @@
     border-bottom: 2px solid gainsboro;
 }
 
-#postlist {
+#content {
     position: relative;
     min-height: 100%;
     width: 100%;
@@ -30,4 +30,16 @@
     color:#ffffff;
     text-align:center;
     line-height:50px;
+}
+
+tbody tr td a {
+    text-decoration-line: none;
+}
+
+a:hover {
+    font-weight: bold;
+}
+
+.right {
+    float: right;
 }
