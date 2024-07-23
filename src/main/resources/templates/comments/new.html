@@ -1,15 +1,12 @@
 <div th:fragment="newComment">
 
     <form action="/comment/create" method="post">
-        <div>
-            <label>댓글 내용</label>
-            <textarea type="text" rows="3"
-                      name="comment"></textarea>
-        </div>
-
+        <textarea type="text" rows="3" class="form-control"
+                  name="comment"></textarea>
         <input type="hidden" name="postingId" th:value="${postingDto.id}">
-
-        <input type="submit" value="댓글작성">
+        <div class="flex-container">
+            <input type="submit" class="btn btn-primary" value="댓글등록">
+        </div>
     </form>
 
 </div>

@@ -1,9 +1,19 @@
 <div th:fragment="commentList">
 
-    <div th:each="comment : ${postingDto.commentDtoList}">
-        <div th:text="${comment.comment}"></div>
-        <input type="button" value="수정" th:onclick="|location.href='/comment/'+${comment.id}+'/edit'|">
-        <input type="button" value="삭제" th:onclick="|location.href='/comment/'+${comment.id}+'/delete'|">
+    <div class="card comment-list" th:each="comment : ${postingDto.commentDtoList}">
+        <div class="card-header">
+            <p class="card-title inline-block">댓글 작성자</p>
+            <div class="inline-block right">
+                <div th:text="${comment.createdDate}"></div>
+            </div>
+        </div>
+
+        <div class="card-body" th:text="${comment.comment}"></div>
+
+        <div class="flex-container">
+            <button type="button" class="btn btn-warning" th:onclick="|location.href='/comment/'+${comment.id}+'/edit'|">수정</button>
+            <button type="button" class="btn btn-danger" th:onclick="|location.href='/comment/'+${comment.id}+'/delete'|">삭제</button>
+        </div>
     </div>
 
 </div>

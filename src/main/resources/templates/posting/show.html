@@ -2,44 +2,32 @@
 <div layout:fragment="content">
 
     <div id="content">
-        <div class="container text-center">
-            <div class="row">
-                <div class="col" th:text="${postingDto.title}">
-                </div>
-                <div class="col">
-                    <p>작성자</p>
-                    <p th:text="${postingDto.createdDate}"></p>
+        <!-- 글 조회 부분 -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title inline-block" th:text="${postingDto.title}"></h5>
+                <div class="inline-block right">
+                    <div th:text="${'작성자 | ' + postingDto.createdDate}"></div>
+                    <div>조회수</div>
                 </div>
             </div>
+
+            <div class="card-body" th:text="${postingDto.content}"></div>
         </div>
 
-        <div th:text="${postingDto.content}"></div>
+        <!-- 수정, 삭제, 목록으로 버튼 -->
+        <div class="flex-container">
+            <button type="button" class="btn btn-warning" th:onclick="|location.href='/posting/'+${postingDto.id}+'/edit'|">수정</button>
+            <button type="button" class="btn btn-danger" th:onclick="|location.href='/posting/'+${postingDto.id}+'/delete'|">삭제</button>
+            <button type="button" class="btn btn-primary" th:onclick="|location.href='/'|">목록으로</button>
+        </div>
 
-        <table>
-            <tr>
-                <th>번호</th>
-                <th>제목</th>
-                <th>내용</th>
-                <!--            <th>작성자</th>-->
-                <th>작성일</th>
-                <!--            <th>조회수</th>-->
-            </tr>
-            <tr>
-                <td th:text="${postingDto.id}"></td>
-                <td th:text="${postingDto.title}"></td>
-                <td th:text="${postingDto.content}"></td>
-                <!--            <td th:text="${postingDto.userId}"></td>-->
-                <td th:if="${postingDto.createdDate}" th:text="${postingDto.createdDate}"></td>
-                <!--            <td th:text="${postingDto.viewCnt}"></td>-->
-            </tr>
-        </table>
-
-        <input type="button" value="수정" th:onclick="|location.href='/posting/'+${postingDto.id}+'/edit'|">
-        <input type="button" value="삭제" th:onclick="|location.href='/posting/'+${postingDto.id}+'/delete'|">
-        <input type="button" value="목록으로" th:onclick="|location.href='/'|">
+        <h5 th:text="|전체 댓글 ${#lists.size(postingDto.commentDtoList)}개|"></h5>
 
         <th:block th:replace="/comments/new :: newComment"></th:block>
         <th:block th:replace="/comments/list :: commentList"></th:block>
+
     </div>
+
 </div>
 </html>
