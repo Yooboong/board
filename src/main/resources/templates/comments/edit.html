@@ -1,17 +1,25 @@
 <html layout:decorate="~{/layout/layout}">
 <div layout:fragment="content">
 
-    <form action="/comment/update" method="post">
-        <input type="hidden" name="id" th:value="${commentDto.id}">
-        <input type="hidden" name="postingId" th:value="${commentDto.postingId}">
-        <div>
-            <label>댓글 내용</label>
-            <textarea rows="3" name="comment" th:text="${commentDto.comment}"></textarea>
-        </div>
-        <input type="submit" value="수정완료">
-        <input type="reset" value="다시쓰기">
-        <input type="button" value="취소" th:onclick="|location.href='/posting/'+${commentDto.postingId}|">
-    </form>
+    <div id="content">
+
+        <form action="/comment/update" method="post">
+            <input type="hidden" name="id" th:value="${commentDto.id}">
+            <input type="hidden" name="postingId" th:value="${commentDto.postingId}">
+
+            <div class="mb-3">
+                <label for="commentForm" class="form-label">댓글 내용</label>
+                <textarea class="form-control" name="comment" th:text="${commentDto.comment}" id="commentForm" rows="3"></textarea>
+            </div>
+
+            <div class="flex-container">
+                <button type="submit" class="btn btn-primary">수정완료</button>
+                <button type="reset" class="btn btn-warning">다시쓰기</button>
+                <button type="button" class="btn btn-danger" th:onclick="|location.href='/posting/'+${commentDto.postingId}|">취소</button>
+            </div>
+        </form>
+
+    </div>
 
 </div>
 </html>

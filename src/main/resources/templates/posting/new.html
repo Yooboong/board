@@ -1,19 +1,27 @@
 <html layout:decorate="~{/layout/layout}">
 <div layout:fragment="content">
 
-    <form action="/posting/create" method="post">
-        <div>
-            <label>제목</label>
-            <input type="text" name="title">
-        </div>
-        <div>
-            <label>내용</label>
-            <textarea rows="3" name="content"></textarea>
-        </div>
-        <input type="submit" value="저장">
-        <input type="reset" value="다시쓰기">
-        <input type="button" value="취소" th:onclick="|location.href='/'|">
-    </form>
+    <div id="content">
+
+        <form action="/posting/create" method="post">
+            <div class="mb-3">
+                <label for="titleForm" class="form-label">제목</label>
+                <input type="text" class="form-control" name="title" id="titleForm">
+            </div>
+
+            <div class="mb-3">
+                <label for="contentForm" class="form-label">내용</label>
+                <textarea class="form-control" name="content" id="contentForm" rows="10"></textarea>
+            </div>
+
+            <div class="flex-container">
+                <button type="submit" class="btn btn-primary">등록</button>
+                <button type="reset" class="btn btn-warning">다시쓰기</button>
+                <button type="button" class="btn btn-danger" th:onclick="|location.href='/'|">취소</button>
+            </div>
+        </form>
+
+    </div>
 
 </div>
 </html>
