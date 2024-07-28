@@ -4,9 +4,14 @@ import com.yooboong.board.dto.PostingDto;
 import com.yooboong.board.entity.Posting;
 import com.yooboong.board.repository.PostingRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,14 +21,29 @@ public class PostingService {
 
     private final PostingRepository postingRepository;
 
-    public List<PostingDto> readAll() {
-        List<Posting> postings = postingRepository.findAll();
+//    public List<PostingDto> readAll() {
+//        List<Posting> postings = postingRepository.findAll();
+//
+//        List<PostingDto> postingDtos = postings.stream()
+//                .map(entity -> PostingDto.toDto(entity))
+//                .collect(Collectors.toList());
+//
+//        return postingDtos;
+//    }
 
-        List<PostingDto> postingDtos = postings.stream()
-                .map(entity -> PostingDto.toDto(entity))
-                .collect(Collectors.toList());
+    public Page<PostingDto> getPage(int page, String keyword) {
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Posting> entityPage = postingRepository.findPageByKeyword(keyword, pageable);
 
-        return postingDtos;
+//        List<PostingDto> dtoList = new ArrayList<>();
+//        List<Posting> entityList = entityPage.getContent();
+//        for (int i = 0; i < entityList.size(); i++){
+//            dtoList.add(PostingDto.toDto(entityList.get(i)));
+//        }
+//        return new PageImpl<>(dtoList, pageable, entityPage.getTotalElements());
+
+        Page<PostingDto> dtoPage = entityPage.map(entity -> PostingDto.toDto(entity));
+        return dtoPage;
     }
 
     @Transactional

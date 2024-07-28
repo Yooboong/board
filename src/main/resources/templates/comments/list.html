@@ -1,4 +1,4 @@
-<div th:fragment="commentList">
+<th:block th:fragment="commentList">
 
     <div class="card comment-list" th:each="comment : ${postingDto.commentDtoList}">
         <div class="card-header">
@@ -16,4 +16,4 @@
         </div>
     </div>
 
-</div>
+</th:block>

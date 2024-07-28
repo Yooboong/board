@@ -5,6 +5,7 @@ import com.yooboong.board.dto.PostingDto;
 import com.yooboong.board.service.CommentService;
 import com.yooboong.board.service.PostingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +19,23 @@ public class PostingController {
 
     private final PostingService postingService; // lombok을 사용한 생성자 주입시 final 추가
 
-    @GetMapping("/") // 게시판 전체 글 조회 (메인 페이지)
-    public String mainPage(Model model) {
-        List<PostingDto> postingDtos = postingService.readAll();
+//    @GetMapping("/") // 게시판 전체 글 조회 (메인 페이지)
+//    public String mainPage(Model model) {
+//        List<PostingDto> postingDtos = postingService.readAll();
+//
+//        model.addAttribute("postingDtos", postingDtos);
+//        return "mainpage";
+//    }
 
-        model.addAttribute("postingDtos", postingDtos);
+    @GetMapping("/")
+    public String mainPage(@RequestParam(name = "page", defaultValue = "0") int page,
+                           @RequestParam(name = "keyword", defaultValue = "") String keyword,
+                           Model model) {
+        Page<PostingDto> postingDtoPage = postingService.getPage(page, keyword);
+
+        model.addAttribute("postingDtoPage", postingDtoPage);
+        model.addAttribute("keyword", keyword);
+
         return "mainpage";
     }
 

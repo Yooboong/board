@@ -1,5 +1,5 @@
 <html layout:decorate="~{/layout/layout}">
-<div layout:fragment="content">
+<th:block layout:fragment="content">
 
     <div id="content">
 
@@ -14,10 +14,28 @@
                 </tr>
             </thead>
 
+<!--            <tbody>-->
+<!--                <tr th:each="posting : ${postingDtos}">-->
+<!--                    <td class="text-center" th:text="${posting.id}"></td>-->
+<!--                    <td><a th:text="${posting.title}" th:href="@{'/posting/'+${posting.id}}"></a></td>-->
+<!--&lt;!&ndash;                    <td th:text="${posting.userId}"></td>&ndash;&gt;-->
+<!--                    <td class="text-center">작성자</td>-->
+<!--                    <td class="text-center" th:if="${posting.createdDate}" th:text="${posting.createdDate}"></td>-->
+<!--&lt;!&ndash;                    <td th:text="${posting.viewCnt}"></td>&ndash;&gt;-->
+<!--                    <td class="text-center">0</td>-->
+<!--                </tr>-->
+<!--            </tbody>-->
+
             <tbody>
-                <tr th:each="posting : ${postingDtos}">
-                    <td class="text-center" th:text="${posting.id}"></td>
-                    <td><a th:text="${posting.title}" th:href="@{'/posting/'+${posting.id}}"></a></td>
+                <tr th:each="posting, loop : ${postingDtoPage}">
+<!--                    <td class="text-center" th:text="${posting.id}"></td>-->
+                    <td th:text="${postingDtoPage.getTotalElements - (postingDtoPage.number * postingDtoPage.size) - loop.index}"></td>
+                    <td>
+                        <a th:text="${posting.title}" th:href="@{'/posting/'+${posting.id}}"></a>
+                        <span class="text-danger small ms-2"
+                              th:if="${#lists.size(posting.commentDtoList) > 0}"
+                              th:text="${'[' + #lists.size(posting.commentDtoList) + ']'}"></span>
+                    </td>
 <!--                    <td th:text="${posting.userId}"></td>-->
                     <td class="text-center">작성자</td>
                     <td class="text-center" th:if="${posting.createdDate}" th:text="${posting.createdDate}"></td>
@@ -32,5 +50,5 @@
         </div>
     </div>
 
-</div>
+</th:block>
 </html>
