@@ -19,22 +19,28 @@ public class PostingController {
 
     private final PostingService postingService; // lombok을 사용한 생성자 주입시 final 추가
 
-//    @GetMapping("/") // 게시판 전체 글 조회 (메인 페이지)
-//    public String mainPage(Model model) {
-//        List<PostingDto> postingDtos = postingService.readAll();
-//
-//        model.addAttribute("postingDtos", postingDtos);
-//        return "mainpage";
-//    }
-
-    @GetMapping("/")
-    public String mainPage(@RequestParam(name = "page", defaultValue = "0") int page,
+    @GetMapping("/") // 메인 페이지 (페이징)
+    public String mainPage(@RequestParam(name = "page", defaultValue = "1") int page,
                            @RequestParam(name = "keyword", defaultValue = "") String keyword,
+                           @RequestParam(name = "searchOption", defaultValue = "1") int searchOption,
                            Model model) {
-        Page<PostingDto> postingDtoPage = postingService.getPage(page, keyword);
+        Page<PostingDto> postingDtoPage = postingService.getPage(page, keyword, searchOption);
+
+        int startPage = ((page - 1) / postingDtoPage.getSize()) * postingDtoPage.getSize() + 1;
+        int endPage = startPage + postingDtoPage.getSize() - 1;
+        if (endPage > postingDtoPage.getTotalPages()) {
+            endPage = postingDtoPage.getTotalPages();
+        }
+        int currentPage = page;
+        int lastPage = postingDtoPage.getTotalPages();
 
         model.addAttribute("postingDtoPage", postingDtoPage);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("lastPage", lastPage);
+        model.addAttribute("searchOption", searchOption);
 
         return "mainpage";
     }
@@ -69,7 +75,7 @@ public class PostingController {
 
     @GetMapping("/{id}/edit") // 수정 시작
     public String editForm(@PathVariable("id") Long id,
-                       Model model) {
+                           Model model) {
         // 수정할 데이터 가져오기
         PostingDto target = postingService.read(id);
 

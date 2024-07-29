@@ -21,19 +21,22 @@ public class PostingService {
 
     private final PostingRepository postingRepository;
 
-//    public List<PostingDto> readAll() {
-//        List<Posting> postings = postingRepository.findAll();
-//
-//        List<PostingDto> postingDtos = postings.stream()
-//                .map(entity -> PostingDto.toDto(entity))
-//                .collect(Collectors.toList());
-//
-//        return postingDtos;
-//    }
+    public Page<PostingDto> getPage(int page, String keyword, int searchOption) {
+        Pageable pageable = PageRequest.of(page - 1, 10); // PageRequest 클래스에 실제로 들어갈 페이지 번호는 0부터
 
-    public Page<PostingDto> getPage(int page, String keyword) {
-        Pageable pageable = PageRequest.of(page, 10);
-        Page<Posting> entityPage = postingRepository.findPageByKeyword(keyword, pageable);
+        Page<Posting> entityPage = null;
+
+        switch (searchOption){
+            case 1:
+                entityPage = postingRepository.findPageByTitleKeyword(keyword, pageable);
+                break;
+            case 2:
+                entityPage = postingRepository.findPageByTitleAndContentKeyword(keyword, pageable);
+                break;
+            case 3:
+//                entityPage = postingRepository.findPageByAuthorKeyword(keyword, pageable);
+                break;
+        }
 
 //        List<PostingDto> dtoList = new ArrayList<>();
 //        List<Posting> entityList = entityPage.getContent();
