@@ -23,5 +23,5 @@ public interface PostingRepository extends JpaRepository<Posting, Long> {
             "p.content like %:keyword% " +
             "order by " +
             "p.createdDate desc")
-    Page<Posting> findPageByTitleAndContentKeyword(String keyword, Pageable pageable);
+    Page<Posting> findPageByTitleAndContentKeyword(@Param("keyword") String keyword, Pageable pageable);
 }

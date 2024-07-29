@@ -69,3 +69,17 @@ a:hover {
 .comment-list {
     margin-bottom: 10px;
 }
+
+#search-post-div {
+    width: 45%;
+    display: flex;
+    justify-content: flex-end;
+    float: right;
+    margin-bottom: 10px;
+    gap: 5px; /* 요소 간 간격 */
+    white-space: nowrap; /* 버튼의 텍스트가 줄 바꿈되지 않도록 */
+}
+
+#search-option {
+    width: 40%;
+}
