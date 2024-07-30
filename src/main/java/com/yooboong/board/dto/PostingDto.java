@@ -2,16 +2,15 @@ package com.yooboong.board.dto;
 
 import com.yooboong.board.entity.Comment;
 import com.yooboong.board.entity.Posting;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor
 @AllArgsConstructor
+@Data
 @Builder
-@Getter
 public class PostingDto {
     private Long id;
     private String title;

@@ -1,13 +1,12 @@
 package com.yooboong.board.dto;
 
 import com.yooboong.board.entity.Comment;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
+@NoArgsConstructor
 @AllArgsConstructor
+@Data
 @Builder
-@Getter
 public class CommentDto {
     private Long id;
     private Long postingId;
