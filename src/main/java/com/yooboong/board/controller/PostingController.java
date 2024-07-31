@@ -77,7 +77,7 @@ public class PostingController {
                        Model model) {
         PostingDto postingDto = postingService.read(id);
 
-        postingService.increaseView(id);
+        postingService.increaseView(id); // 게시글 조회수 증가
 
         model.addAttribute("postingDto", postingDto);
         return "posting/show";
