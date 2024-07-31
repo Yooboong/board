@@ -5,10 +5,10 @@
 
         <div class="my-3 border-bottom">
             <div>
-                <h4>회원가입</h4>
+                <h4>회원탈퇴</h4>
             </div>
         </div>
-        <form action="/signup" method="post">
+        <form action="/account/delete" method="post">
             <div class="mb-3">
                 <label for="email" class="form-label">이메일</label>
                 <input type="email" name="email" id="email" class="form-control">
@@ -29,7 +29,7 @@
                 <label for="passwordConfirm" class="form-label">비밀번호 확인</label>
                 <input type="password" name="passwordConfirm" id="passwordConfirm" class="form-control">
             </div>
-            <button type="submit" class="btn btn-primary">회원가입</button>
+            <button type="submit" class="btn btn-danger">회원탈퇴</button>
         </form>
 
     </div>

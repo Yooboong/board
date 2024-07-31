@@ -7,8 +7,8 @@
             <div class="card-header">
                 <h5 class="card-title inline-block" th:text="${postingDto.title}"></h5>
                 <div class="inline-block right">
-                    <div th:text="${'작성자 | ' + postingDto.createdDate}"></div>
-                    <div>조회수</div>
+                    <div th:text="${postingDto.nickname + ' | ' + postingDto.createdDate}"></div>
+                    <div th:text="${'조회수' + ' : ' + postingDto.view}"></div>
                 </div>
             </div>
 

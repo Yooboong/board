@@ -1,7 +1,9 @@
 package com.yooboong.board.service;
 
 import com.yooboong.board.dto.PostingDto;
+import com.yooboong.board.entity.Account;
 import com.yooboong.board.entity.Posting;
+import com.yooboong.board.repository.AccountRepository;
 import com.yooboong.board.repository.PostingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostingService {
 
+    private final AccountRepository accountRepository;
+
     private final PostingRepository postingRepository;
 
     public Page<PostingDto> getPage(int page, String keyword, int searchOption) {
@@ -34,7 +38,7 @@ public class PostingService {
                 entityPage = postingRepository.findPageByTitleAndContentKeyword(keyword, pageable);
                 break;
             case 3:
-//                entityPage = postingRepository.findPageByAuthorKeyword(keyword, pageable);
+                entityPage = postingRepository.findPageByAuthorKeyword(keyword, pageable);
                 break;
         }
 
@@ -50,8 +54,12 @@ public class PostingService {
     }
 
     @Transactional
-    public PostingDto create(PostingDto postingDto) {
-        Posting postingEntity = Posting.toEntity(postingDto);
+    public PostingDto create(String username, PostingDto postingDto) {
+        Account account = accountRepository.findByUsername(username);
+        if (account == null)
+            throw new IllegalArgumentException("게시글 생성 실패! 계정이 존재하지 않음");
+
+        Posting postingEntity = Posting.toEntity(account, postingDto);
 
         Posting created = postingRepository.save(postingEntity);
 
@@ -66,6 +74,11 @@ public class PostingService {
 
         PostingDto postingDto = PostingDto.toDto(posting);
         return postingDto;
+    }
+
+    @Transactional
+    public void increaseView(Long id) {
+        postingRepository.updateView(id);
     }
 
     @Transactional

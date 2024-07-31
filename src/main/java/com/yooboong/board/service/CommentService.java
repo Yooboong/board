@@ -1,8 +1,10 @@
 package com.yooboong.board.service;
 
 import com.yooboong.board.dto.CommentDto;
+import com.yooboong.board.entity.Account;
 import com.yooboong.board.entity.Comment;
 import com.yooboong.board.entity.Posting;
+import com.yooboong.board.repository.AccountRepository;
 import com.yooboong.board.repository.CommentRepository;
 import com.yooboong.board.repository.PostingRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class CommentService {
+
+    private final AccountRepository accountRepository;
 
     private final PostingRepository postingRepository;
 
@@ -31,12 +35,16 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentDto create(Long postingId, CommentDto commentDto) {
+    public CommentDto create(String username, Long postingId, CommentDto commentDto) {
+        Account account = accountRepository.findByUsername(username);
+        if (account == null)
+            throw new IllegalArgumentException("댓글 생성 실패! 계정이 존재하지 않음");
+
         Posting target = postingRepository.findById(postingId).orElse(null);
         if (target == null)
             throw new IllegalArgumentException("댓글 생성 실패! 해당하는 id의 게시물이 존재하지 않음");
 
-        Comment commentEntity = Comment.toEntity(target, commentDto);
+        Comment commentEntity = Comment.toEntity(account, target, commentDto);
 
         Comment created = commentRepository.save(commentEntity);
 

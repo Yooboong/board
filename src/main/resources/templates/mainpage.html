@@ -25,7 +25,6 @@
 
             <tbody>
                 <tr th:each="posting, loop : ${postingDtoPage}">
-<!--                    <td class="text-center" th:text="${posting.id}"></td>-->
                     <td class="text-center" th:text="${postingDtoPage.getTotalElements - (postingDtoPage.number * postingDtoPage.size) - loop.index}"></td>
                     <td>
                         <a th:text="${posting.title}" th:href="@{'/posting/'+${posting.id}}"></a>
@@ -33,11 +32,9 @@
                               th:if="${#lists.size(posting.commentDtoList) > 0}"
                               th:text="${'[' + #lists.size(posting.commentDtoList) + ']'}"></span>
                     </td>
-<!--                    <td th:text="${posting.userId}"></td>-->
-                    <td class="text-center">작성자</td>
-                    <td class="text-center" th:if="${posting.createdDate}" th:text="${posting.createdDate}"></td>
-<!--                    <td th:text="${posting.viewCnt}"></td>-->
-                    <td class="text-center">0</td>
+                    <td th:text="${posting.nickname}"></td>
+                    <td class="text-center" th:text="${posting.createdDate}"></td>
+                    <td class="text-center" th:text="${posting.view}"></td>
                 </tr>
             </tbody>
         </table>

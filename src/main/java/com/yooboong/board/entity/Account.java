@@ -43,8 +43,12 @@ public class Account extends BaseTimeEntity {
                 .build();
     }
 
-    public void update(AccountDto accountDto) {
-        this.password = accountDto.getPassword();
-        this.nickname = accountDto.getNickname();
+    public void updateInfo(AccountDto accountDto) {
+        if (!this.nickname.equals(accountDto.getNickname()))
+            this.nickname = accountDto.getNickname();
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
     }
 }

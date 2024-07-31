@@ -19,14 +19,19 @@ public class Comment extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "author_id")
+    private Account author;
+
+    @ManyToOne
     @JoinColumn(name = "posting_id")
     private Posting posting;
 
     @Column(nullable = false)
     private String comment;
 
-    public static Comment toEntity(Posting posting, CommentDto commentDto) {
+    public static Comment toEntity(Account account, Posting posting, CommentDto commentDto) {
         return Comment.builder()
+                .author(account)
                 .posting(posting)
                 .comment(commentDto.getComment())
                 .build();

@@ -9,6 +9,8 @@ import lombok.*;
 @Builder
 public class CommentDto {
     private Long id;
+    private String username; // Principal.getName()과 비교하기위함 (계정 아이디에 해당)
+    private String nickname; // 작성자 닉네임
     private Long postingId;
     private String comment;
 
@@ -17,6 +19,8 @@ public class CommentDto {
     public static CommentDto toDto(Comment entity) {
         return CommentDto.builder()
                 .id(entity.getId())
+                .username(entity.getAuthor().getUsername())
+                .nickname(entity.getAuthor().getNickname())
                 .postingId(entity.getPosting().getId())
                 .comment(entity.getComment())
                 .createdDate(entity.getCreatedDate())

@@ -13,8 +13,11 @@ import java.util.stream.Collectors;
 @Builder
 public class PostingDto {
     private Long id;
+    private String username; // Principal.getName()과 비교하기위함 (계정 아이디에 해당)
+    private String nickname; // 작성자 닉네임
     private String title;
     private String content;
+    private Integer view;
 
     private List<CommentDto> commentDtoList;
 
@@ -33,8 +36,11 @@ public class PostingDto {
 
         return PostingDto.builder()
                 .id(entity.getId())
+                .username(entity.getAuthor().getUsername())
+                .nickname(entity.getAuthor().getNickname())
                 .title(entity.getTitle())
                 .content(entity.getContent())
+                .view(entity.getView())
                 .commentDtoList(commentDtos)
                 .createdDate(entity.getCreatedDate())
                 .modifiedDate(entity.getModifiedDate())

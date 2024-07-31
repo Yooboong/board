@@ -19,19 +19,28 @@ public class Posting extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private Account author;
+
     @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    private Integer view;
+
     @OneToMany(mappedBy = "posting", cascade = CascadeType.REMOVE)
     private List<Comment> commentList;
 
-    public static Posting toEntity(PostingDto postingDto) {
+    public static Posting toEntity(Account account, PostingDto postingDto) {
         return Posting.builder()
+                .author(account)
                 .title(postingDto.getTitle())
                 .content(postingDto.getContent())
+                .view(0)
                 .build();
     }
 
