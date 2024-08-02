@@ -1,6 +1,7 @@
 package com.yooboong.board.dto;
 
 import com.yooboong.board.entity.Comment;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @NoArgsConstructor
@@ -12,6 +13,8 @@ public class CommentDto {
     private String username; // Principal.getName()과 비교하기위함 (계정 아이디에 해당)
     private String nickname; // 작성자 닉네임
     private Long postingId;
+
+    @NotBlank(message = "댓글을 입력하세요")
     private String comment;
 
     private String createdDate, modifiedDate;

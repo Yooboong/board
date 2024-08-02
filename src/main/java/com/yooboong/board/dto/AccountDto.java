@@ -14,19 +14,19 @@ public class AccountDto {
     private Long id;
 
     @NotBlank(message = "이메일을 입력하세요")
-    @Email(message = "이메일 형식이 맞지 않습니다")
+    @Email(message = "이메일 형식이 올바르지 않습니다")
     private String email;
 
-    @Pattern(regexp = "^(?=.*[a-z])[a-z0-9]+$", message = "아이디는 알파벳 소문자로 시작하며, 알파벳 소문자와 숫자만 작성할 수 있습니다.")
-//    @NotBlank(message = "아이디를 입력하세요")
+    @NotBlank(message = "아이디를 입력하세요")
+    @Pattern(regexp = "^[a-z0-9]{5,20}$", message = "아이디는 5~20자의 알파벳 소문자, 숫자만 사용가능합니다")
     private String username;
 
-    @Pattern(regexp = "^[a-zA-Z0-9!@#$%^&*()_+={}|\\:;\"'<>,.?/~`-]+$", message = "비밀번호는 알파벳 대소문자, 숫자, 특수문자만 포함할 수 있으며 공백은 허용되지 않습니다.")
-//    @NotBlank(message = "비밀번호를 입력하세요")
+    @NotBlank(message = "비밀번호를 입력하세요")
+    @Pattern(regexp = "^[a-zA-Z0-9!@#$%^&*()_+={}\\[\\]|\\\\;:'\",.<>?/~`]{8,16}$", message = "비밀번호는 8~16자의 알파벳 대소문자, 숫자, 특수문자만 사용가능합니다")
     private String password;
 
-    @Pattern(regexp = "^\\S+$", message = "닉네임에 공백은 포함할 수 없습니다")
-    //    @NotBlank(message = "닉네임을 입력하세요")
+    @NotBlank(message = "닉네임을 입력하세요")
+    @Pattern(regexp = "^[a-zA-Z0-9가-힣]{2,20}$", message = "닉네임은 2~20자의 알파벳 대소문자, 숫자, 한글만 사용가능합니다")
     private String nickname;
 
     private Integer permit;
@@ -34,6 +34,7 @@ public class AccountDto {
     @NotBlank(message = "비밀번호를 확인하세요")
     private String passwordConfirm;
 
+    @NotBlank(message = "기존 비밀번호를 입력하세요")
     private String currentPassword;
 
     public static AccountDto toDto(Account entity) {

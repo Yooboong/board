@@ -48,7 +48,7 @@ public class AccountController {
         }
 
         // 비밀번호 확인 추가
-        if (!accountDto.getPasswordConfirm().equals("") && !accountDto.getPassword().equals(accountDto.getPasswordConfirm())) {
+        if (!accountDto.getPasswordConfirm().trim().equals("") && !accountDto.getPassword().equals(accountDto.getPasswordConfirm())) {
             bindingResult.rejectValue("passwordConfirm", "passwordMismatch", "비밀번호가 일치하지 않습니다");
         }
 
@@ -101,30 +101,84 @@ public class AccountController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/account/password") // 비밀번호 수정 페이지
-    public String editPasswordForm() {
+    public String editPasswordForm(AccountDto accountDto) {
         return "account/password";
     }
-
-    // 비밀번호 수정시, 기존 비밀번호 체크, 새 비밀번호, 비밀번호확인 구현할 것
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/account/password/update") // 비밀번호 수정
     public String updatePassword(Principal principal,
-                                 @RequestParam("password") String password) {
-        AccountDto updated = accountService.updatePassword(principal.getName(), password);
+                                 @Valid AccountDto accountDto,
+                                 BindingResult bindingResult,
+                                 Model model) {
+        // 기존 비밀번호를 입력하지 않은경우
+        if (bindingResult.hasFieldErrors("currentPassword")) {
+            model.addAttribute("accountDto", accountDto);
+            return "account/password";
+        }
+
+        // 기존 비밀번호가 틀린경우
+        if (!accountService.checkCurrentPassword(principal.getName(), accountDto.getCurrentPassword())) {
+            bindingResult.rejectValue("currentPassword", "currentPasswordMismatch", "비밀번호가 일치하지 않습니다");
+            model.addAttribute("accountDto", accountDto);
+            return "account/password";
+        }
+
+        // 새 비밀번호의 형식이 맞지 않는경우
+        if (bindingResult.hasFieldErrors("password")) {
+            model.addAttribute("accountDto", accountDto);
+            return "account/password";
+        }
+
+        // 비밀번호 확인을 입력하지 않은경우
+        if (bindingResult.hasFieldErrors("passwordConfirm")) {
+            model.addAttribute("accountDto", accountDto);
+            return "account/password";
+        }
+
+        // 새 비밀번호와 비밀번호 확인이 일치하지 않는경우 (새 비밀번호가 일치하지 않습니다)
+        if (!accountDto.getPassword().equals(accountDto.getPasswordConfirm())) {
+            bindingResult.rejectValue("passwordConfirm", "newPasswordMismatch", "새 비밀번호가 일치하지 않습니다");
+            return "account/password";
+        }
+
+        AccountDto updated = accountService.updatePassword(principal.getName(), accountDto.getPassword());
 
         return "redirect:/";
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/account/delete") // 회원탈퇴 페이지
-    public String deleteForm() {
+    public String deleteForm(AccountDto accountDto) {
         return "account/delete";
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/account/delete") // 회원탈퇴
-    public String delete(Principal principal) { // 추가 검증 구현할 것
+    public String delete(Principal principal,
+                         @Valid AccountDto accountDto,
+                         BindingResult bindingResult,
+                         Model model) {
+        // 아이디를 입력하지 않았거나 형식에 맞지 않는경우
+        if (bindingResult.hasFieldErrors("username")) {
+            model.addAttribute("accountDto", accountDto);
+            return "account/delete";
+        }
+
+        // 아이디가 일치하지 않는경우
+        if (!principal.getName().equals(accountDto.getUsername())) {
+            bindingResult.rejectValue("username", "usernameMismatch", "아이디가 일치하지 않습니다");
+            model.addAttribute("accountDto", accountDto);
+            return "account/delete";
+        }
+
+        // 비밀번호가 일치하지 않는경우
+        if (!accountService.checkCurrentPassword(principal.getName(), accountDto.getPassword())) {
+            bindingResult.rejectValue("password", "passwordMismatch", "비밀번호가 일치하지 않습니다");
+            model.addAttribute("accountDto", accountDto);
+            return "account/delete";
+        }
+
         accountService.delete(principal.getName());
 
         return "redirect:/logout"; // 탈퇴 후 로그아웃으로 세션삭제

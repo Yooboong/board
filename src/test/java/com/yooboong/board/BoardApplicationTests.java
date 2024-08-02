@@ -32,7 +32,7 @@ class BoardApplicationTests {
         AccountDto accountDto = AccountDto.builder()
                 .email("yooboong22@gmail.com")
                 .username("admin")
-                .password(passwordEncoder.encode("1234"))
+                .password(passwordEncoder.encode("yooboong22"))
                 .nickname("관리자")
                 .build();
 

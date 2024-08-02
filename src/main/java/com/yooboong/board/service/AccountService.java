@@ -95,4 +95,14 @@ public class AccountService {
         return false;
     }
 
+    public boolean checkCurrentPassword(String username, String currentPassword) {
+        Account target = accountRepository.findByUsername(username);
+        if (target == null) {
+            throw new IllegalArgumentException("비밀번호 일치 확인 실패! 해당하는 계정이 존재하지 않음");
+        }
+
+        // BCryptPasswordEncoder의 matches를 이용하여 비밀번호가 일치하는지 확인
+        return passwordEncoder.matches(currentPassword, target.getPassword());
+    }
+
 }

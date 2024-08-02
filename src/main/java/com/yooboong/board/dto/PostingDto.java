@@ -2,6 +2,7 @@ package com.yooboong.board.dto;
 
 import com.yooboong.board.entity.Comment;
 import com.yooboong.board.entity.Posting;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.List;
@@ -15,8 +16,13 @@ public class PostingDto {
     private Long id;
     private String username; // Principal.getName()과 비교하기위함 (계정 아이디에 해당)
     private String nickname; // 작성자 닉네임
+
+    @NotBlank(message = "제목을 입력하세요")
     private String title;
+
+    @NotBlank(message = "내용을 입력하세요")
     private String content;
+
     private Integer view;
 
     private List<CommentDto> commentDtoList;
