@@ -3,11 +3,13 @@ package com.yooboong.board.controller;
 import com.yooboong.board.dto.AccountDto;
 import com.yooboong.board.entity.Account;
 import com.yooboong.board.service.AccountService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,12 +24,39 @@ public class AccountController {
     private final AccountService accountService;
 
     @GetMapping("/signup") // 회원가입 페이지
-    public String signupForm() {
+    public String signupForm(AccountDto accountDto) { // th:object로 뷰에 바인딩 시키기위해 매개변수 추가
         return "account/signup";
     }
 
     @PostMapping("/signup") // 회원가입
-    public String signup(AccountDto accountDto) {
+    public String signup(@Valid AccountDto accountDto,
+                         BindingResult bindingResult,
+                         Model model) {
+        // 이메일 중복 체크 추가
+        if (accountService.checkDuplicateEmail(accountDto.getEmail())) {
+            bindingResult.rejectValue("email", "duplicateEmail", "이미 사용중인 email 입니다");
+        }
+
+        // 아이디 중복 체크 추가
+        if (accountService.checkDuplicateUsername(accountDto.getUsername())) {
+            bindingResult.rejectValue("username", "duplicateUsername", "이미 사용중인 아이디 입니다");
+        }
+
+        // 닉네임 중복 체크 추가
+        if (accountService.checkDuplicateNickname(accountDto.getNickname())) {
+            bindingResult.rejectValue("nickname", "duplicateNickname", "이미 사용중인 닉네임 입니다");
+        }
+
+        // 비밀번호 확인 추가
+        if (!accountDto.getPasswordConfirm().equals("") && !accountDto.getPassword().equals(accountDto.getPasswordConfirm())) {
+            bindingResult.rejectValue("passwordConfirm", "passwordMismatch", "비밀번호가 일치하지 않습니다");
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("accountDto", accountDto);
+            return "account/signup";
+        }
+
         AccountDto created = accountService.create(accountDto);
 
         return "redirect:/";
@@ -40,21 +69,31 @@ public class AccountController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/account") // 내 정보
-    public String showAccountInfo(Principal principal,
-                                  Model model) {
+    public String showMyInfo(Principal principal,
+                             Model model) {
         AccountDto accountDto = accountService.getAccount(principal.getName());
 
         model.addAttribute("accountDto", accountDto);
         return "account/info";
     }
 
-    // 닉네임 중복체크 구현할 것
-
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/account/update") // 비밀번호를 제외한 내정보 수정
     public String updateMyInfo(Principal principal,
-                               AccountDto accountDto,
+                               @Valid AccountDto accountDto,
+                               BindingResult bindingResult,
                                Model model) {
+        if (bindingResult.hasFieldErrors("nickname")) {
+            model.addAttribute("accountDto", accountDto);
+            return "account/info";
+        }
+
+        if (accountService.checkDuplicateNickname(accountDto.getNickname())) { // 이미 사용중인 닉네임을 작성한경우
+            bindingResult.rejectValue("nickname", "duplicateNickname", "이미 사용중인 닉네임 입니다");
+            model.addAttribute("accountDto", accountDto);
+            return "account/info";
+        }
+
         AccountDto updated = accountService.updateMyInfo(principal.getName(), accountDto);
 
         return "redirect:/account";

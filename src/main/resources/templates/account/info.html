@@ -9,7 +9,7 @@
                     <h4>회원정보</h4>
                 </div>
             </div>
-            <form action="/account/update" method="post">
+            <form th:action="@{/account/update}" th:object="${accountDto}" method="post">
                 <div class="mb-3">
                     <label for="email" class="form-label">이메일</label>
                     <input type="email" name="email" id="email" th:value="${accountDto.email}" readonly class="form-control">
@@ -20,8 +20,10 @@
                 </div>
                 <div class="mb-3">
                     <label for="nickname" class="form-label">닉네임</label>
-                    <input type="text" name="nickname" id="nickname" th:value="${accountDto.nickname}" class="form-control">
+                    <input type="text" th:field="*{nickname}" id="nickname" class="form-control">
                 </div>
+                <div th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}"></div>
+
                 <button type="submit" class="btn btn-primary">수정</button>
             </form>
         </div>

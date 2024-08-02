@@ -18,16 +18,6 @@ public class AccountService {
 
     @Transactional
     public AccountDto create(AccountDto accountDto) {
-        if (accountRepository.findByEmail(accountDto.getEmail()) != null) {
-            throw new IllegalArgumentException("이미 사용중인 email 입니다");
-        }
-        if (accountRepository.findByUsername(accountDto.getUsername()) != null) {
-            throw new IllegalArgumentException("이미 사용중인 아이디 입니다");
-        }
-        if (accountRepository.findByNickname(accountDto.getNickname()) != null) {
-            throw new IllegalArgumentException("이미 사용중인 닉네임 입니다");
-        }
-
         accountDto.setPassword(passwordEncoder.encode(accountDto.getPassword()));
         Account accountEntity = Account.toEntity(accountDto);
 
@@ -79,6 +69,30 @@ public class AccountService {
             throw new IllegalArgumentException("계정 삭제 실패! 해당하는 계정이 존재하지 않음");
 
         accountRepository.delete(target);
+    }
+
+    public boolean checkDuplicateEmail(String email) { // 이미 가입된 이메일인지 체크
+        Account target = accountRepository.findByEmail(email);
+        if (target != null) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkDuplicateUsername(String username) { // 사용중인 아이디인지 체크
+        Account target = accountRepository.findByUsername(username);
+        if (target != null) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkDuplicateNickname(String nickname) { // 사용중인 닉네임인지 체크
+        Account target = accountRepository.findByNickname(nickname);
+        if (target != null) {
+            return true;
+        }
+        return false;
     }
 
 }

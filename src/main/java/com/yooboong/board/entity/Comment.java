@@ -1,6 +1,7 @@
 package com.yooboong.board.entity;
 
 import com.yooboong.board.dto.CommentDto;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
