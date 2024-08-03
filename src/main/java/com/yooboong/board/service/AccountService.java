@@ -3,6 +3,8 @@ package com.yooboong.board.service;
 import com.yooboong.board.dto.AccountDto;
 import com.yooboong.board.entity.Account;
 import com.yooboong.board.repository.AccountRepository;
+import com.yooboong.board.repository.CommentRepository;
+import com.yooboong.board.repository.PostingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,10 @@ public class AccountService {
     private final AccountRepository accountRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final CommentRepository commentRepository;
+
+    private final PostingRepository postingRepository;
 
     @Transactional
     public AccountDto create(AccountDto accountDto) {
@@ -67,6 +73,10 @@ public class AccountService {
         Account target = accountRepository.findByUsername(username);
         if (target == null)
             throw new IllegalArgumentException("계정 삭제 실패! 해당하는 계정이 존재하지 않음");
+
+        // 사용자가 작성한 댓글, 게시글 모두 삭제해줘야 함
+        commentRepository.deleteByAuthorId(target.getId());
+        postingRepository.deleteByAuthorId(target.getId());
 
         accountRepository.delete(target);
     }

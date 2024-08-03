@@ -42,4 +42,10 @@ public interface PostingRepository extends JpaRepository<Posting, Long> {
             "where " +
             "p.id = :id")
     void updateView(@Param("id") Long id);
+
+    @Modifying
+    @Query("delete from Posting p " +
+            "where " +
+            "p.author.id = :authorId")
+    void deleteByAuthorId(@Param("authorId") Long authorId);
 }

@@ -4,12 +4,14 @@ import com.yooboong.board.dto.CommentDto;
 import com.yooboong.board.dto.PostingDto;
 import com.yooboong.board.service.CommentService;
 import com.yooboong.board.service.PostingService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -50,7 +52,7 @@ public class PostingController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/new") // 글 생성 버튼 눌렀을 때
-    public String createForm() {
+    public String createForm(PostingDto postingDto) {
         return "posting/new"; // 글 생성 페이지로 이동
     }
 
@@ -58,12 +60,17 @@ public class PostingController {
     // 로그아웃 상태에서 해당 어노테이션이 적용된 메소드가 호출되면, 로그인 페이지로 강제이동
     @PostMapping("/create") // 글 생성
     public String create(Principal principal,
-                         @RequestParam("title") String title,
-                         @RequestParam("content") String content) {
+                         @Valid PostingDto postingDto,
+                         BindingResult bindingResult,
+                         Model model) {
+        if (bindingResult.hasErrors()) { // 제목 및 내용을 작성하지 않은경우
+            model.addAttribute("postingDto", postingDto);
+            return "posting/new";
+        }
 
         PostingDto input = PostingDto.builder()
-                .title(title)
-                .content(content)
+                .title(postingDto.getTitle())
+                .content(postingDto.getContent())
                 .view(0)
                 .build();
 
@@ -95,28 +102,33 @@ public class PostingController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "게시글 수정 권한이 없음");
 
         model.addAttribute("postingDto", target);
-        return "/posting/edit";
+        return "posting/edit";
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/update") // 수정
     public String update(Principal principal,
-                         @RequestParam("id") Long id,
-                         @RequestParam("title") String title,
-                         @RequestParam("content") String content) {
-        PostingDto target = postingService.read(id);
+                         @Valid PostingDto postingDto,
+                         BindingResult bindingResult,
+                         Model model) {
+        PostingDto target = postingService.read(postingDto.getId());
         if (!target.getUsername().equals(principal.getName()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "게시글 수정 권한이 없음");
 
+        if (bindingResult.hasErrors()) { // 제목 및 내용이 비어있는경우
+            model.addAttribute("postingDto", postingDto);
+            return "posting/edit";
+        }
+
         PostingDto input = PostingDto.builder()
-                .id(id)
-                .title(title)
-                .content(content)
+                .id(postingDto.getId())
+                .title(postingDto.getTitle())
+                .content(postingDto.getContent())
                 .build();
 
-        PostingDto updated = postingService.update(id, input);
+        PostingDto updated = postingService.update(postingDto.getId(), input);
 
-        return "redirect:/posting/" + id;
+        return "redirect:/posting/" + postingDto.getId();
     }
 
     @PreAuthorize("isAuthenticated()")

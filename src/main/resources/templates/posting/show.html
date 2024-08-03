@@ -17,9 +17,9 @@
 
         <!-- 수정, 삭제, 목록으로 버튼 -->
         <div class="flex-container">
-            <button type="button" class="btn btn-warning" th:onclick="|location.href='/posting/'+${postingDto.id}+'/edit'|">수정</button>
+            <button type="button" class="btn btn-primary" th:onclick="|location.href='/posting/'+${postingDto.id}+'/edit'|">수정</button>
             <button type="button" class="btn btn-danger" th:onclick="|location.href='/posting/'+${postingDto.id}+'/delete'|">삭제</button>
-            <button type="button" class="btn btn-primary" th:onclick="|location.href='/'|">목록으로</button>
+            <button type="button" class="btn btn-info btn-info-custom" th:onclick="|location.href='/'|">목록으로</button>
         </div>
 
         <h5 th:text="|전체 댓글 ${#lists.size(postingDto.commentDtoList)}개|"></h5>

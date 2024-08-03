@@ -58,6 +58,10 @@ a:hover {
     margin-left: 5px;
 }
 
+.btn-info-custom {
+    color: white !important;
+}
+
 .inline-block {
     display: inline-block;
 }
@@ -87,4 +91,9 @@ a:hover {
 .account {
     margin: auto;
     width: 50%;
+}
+
+.valid {
+    font-size: xx-small;
+    color: red !important;
 }

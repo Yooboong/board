@@ -52,7 +52,7 @@ public class AccountController {
             bindingResult.rejectValue("passwordConfirm", "passwordMismatch", "비밀번호가 일치하지 않습니다");
         }
 
-        if (bindingResult.hasErrors()) {
+        if (bindingResult.hasFieldErrors("email") || bindingResult.hasFieldErrors("username") || bindingResult.hasFieldErrors("nickname") || bindingResult.hasFieldErrors("password") || bindingResult.hasFieldErrors("passwordConfirm")) {
             model.addAttribute("accountDto", accountDto);
             return "account/signup";
         }
@@ -111,34 +111,22 @@ public class AccountController {
                                  @Valid AccountDto accountDto,
                                  BindingResult bindingResult,
                                  Model model) {
-        // 기존 비밀번호를 입력하지 않은경우
-        if (bindingResult.hasFieldErrors("currentPassword")) {
-            model.addAttribute("accountDto", accountDto);
-            return "account/password";
-        }
-
         // 기존 비밀번호가 틀린경우
-        if (!accountService.checkCurrentPassword(principal.getName(), accountDto.getCurrentPassword())) {
+        if (!accountDto.getCurrentPassword().trim().equals("") && !accountService.checkCurrentPassword(principal.getName(), accountDto.getCurrentPassword())) {
             bindingResult.rejectValue("currentPassword", "currentPasswordMismatch", "비밀번호가 일치하지 않습니다");
-            model.addAttribute("accountDto", accountDto);
-            return "account/password";
-        }
-
-        // 새 비밀번호의 형식이 맞지 않는경우
-        if (bindingResult.hasFieldErrors("password")) {
-            model.addAttribute("accountDto", accountDto);
-            return "account/password";
-        }
-
-        // 비밀번호 확인을 입력하지 않은경우
-        if (bindingResult.hasFieldErrors("passwordConfirm")) {
-            model.addAttribute("accountDto", accountDto);
-            return "account/password";
         }
 
         // 새 비밀번호와 비밀번호 확인이 일치하지 않는경우 (새 비밀번호가 일치하지 않습니다)
         if (!accountDto.getPassword().equals(accountDto.getPasswordConfirm())) {
             bindingResult.rejectValue("passwordConfirm", "newPasswordMismatch", "새 비밀번호가 일치하지 않습니다");
+        }
+
+        // 문제가 생긴경우 (+ 그 외)
+        // *기존 비밀번호를 입력하지 않은경우
+        // *새 비밀번호의 형식이 맞지 않는경우
+        // *비밀번호 확인을 입력하지 않은경우
+        if (bindingResult.hasFieldErrors("currentPassword") || bindingResult.hasFieldErrors("password") || bindingResult.hasFieldErrors("passwordConfirm")) {
+            model.addAttribute("accountDto", accountDto);
             return "account/password";
         }
 
@@ -159,22 +147,20 @@ public class AccountController {
                          @Valid AccountDto accountDto,
                          BindingResult bindingResult,
                          Model model) {
-        // 아이디를 입력하지 않았거나 형식에 맞지 않는경우
-        if (bindingResult.hasFieldErrors("username")) {
-            model.addAttribute("accountDto", accountDto);
-            return "account/delete";
-        }
-
         // 아이디가 일치하지 않는경우
-        if (!principal.getName().equals(accountDto.getUsername())) {
+        if (!accountDto.getUsername().trim().equals("") && !principal.getName().equals(accountDto.getUsername())) {
             bindingResult.rejectValue("username", "usernameMismatch", "아이디가 일치하지 않습니다");
-            model.addAttribute("accountDto", accountDto);
-            return "account/delete";
         }
 
         // 비밀번호가 일치하지 않는경우
-        if (!accountService.checkCurrentPassword(principal.getName(), accountDto.getPassword())) {
+        if (!accountDto.getPassword().trim().equals("") && !accountService.checkCurrentPassword(principal.getName(), accountDto.getPassword())) {
             bindingResult.rejectValue("password", "passwordMismatch", "비밀번호가 일치하지 않습니다");
+        }
+
+        // 문제가 생긴경우 (+ 그 외)
+        // 아이디를 입력하지 않았거나 형식에 맞지 않는경우
+        // 비밀번호를 입력하지 않았거나 형식에 맞지 않는경우
+        if (bindingResult.hasFieldErrors("username") || bindingResult.hasFieldErrors("password")) {
             model.addAttribute("accountDto", accountDto);
             return "account/delete";
         }
