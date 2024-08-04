@@ -10,9 +10,30 @@
 
         <div class="card-body" th:text="${comment.comment}" style="white-space: pre-line;"></div>
 
-        <div class="flex-container">
-            <button type="button" class="btn btn-primary" th:onclick="|location.href='/comment/'+${comment.id}+'/edit'|">수정</button>
+        <!-- 수정 버튼 및 수정 폼 표시용 버튼 -->
+        <div class="flex-container" style="margin-right: 5px;">
+            <button type="button" class="btn btn-primary" onclick="toggleCommentEditForm(this)">수정</button>
             <button type="button" class="btn btn-danger" th:onclick="|location.href='/comment/'+${comment.id}+'/delete'|">삭제</button>
+        </div>
+
+        <!-- 댓글 수정 폼 (초기에는 숨김) -->
+        <div class="comment-edit-form" style="display: none;">
+            <form action="/comment/update" method="post" onsubmit="return commentValidation(this)">
+                <input type="hidden" name="id" th:value="${comment.id}">
+                <input type="hidden" name="postingId" th:value="${comment.postingId}">
+
+                <div class="mb-3">
+                    <div class="my-3 border-bottom">
+                        <h6>댓글 수정</h6>
+                    </div>
+                    <textarea class="form-control" name="comment" th:text="${comment.comment}" rows="3"></textarea>
+                </div>
+
+                <div class="flex-container">
+                    <button type="submit" class="btn btn-primary">완료</button>
+                    <button type="button" class="btn btn-info" onclick="toggleCommentEditForm(this)">취소</button>
+                </div>
+            </form>
         </div>
     </div>
 

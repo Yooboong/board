@@ -3,7 +3,7 @@
 
     <div id="content">
 
-        <form th:action="@{/posting/update}" th:object="${postingDto}" method="post">
+        <form th:action="@{/posting/update}" th:object="${postingDto}" method="post" onsubmit="return postingValidation()">
             <input type="hidden" name="id" th:value="${postingDto.id}">
 
             <div class="mb-3">

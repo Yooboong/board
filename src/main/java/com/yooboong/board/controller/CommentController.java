@@ -34,20 +34,6 @@ public class CommentController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/{id}/edit")
-    public String editForm(Principal principal,
-                           @PathVariable("id") Long id,
-                           Model model) {
-        CommentDto target = commentService.read(id);
-
-        if (!target.getUsername().equals(principal.getName()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "댓글 수정 권한이 없음");
-
-        model.addAttribute("commentDto", target);
-        return "comments/edit";
-    }
-
-    @PreAuthorize("isAuthenticated()")
     @PostMapping("/update")
     public String update(Principal principal,
                          @RequestParam("id") Long id,
