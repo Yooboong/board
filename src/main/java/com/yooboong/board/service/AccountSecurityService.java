@@ -1,5 +1,6 @@
 package com.yooboong.board.service;
 
+import com.yooboong.board.dto.CustomUserDetails;
 import com.yooboong.board.entity.Account;
 import com.yooboong.board.repository.AccountRepository;
 import com.yooboong.board.role.AccountRole;
@@ -35,7 +36,8 @@ public class AccountSecurityService implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority(AccountRole.USER.getValue()));
         }
 
-        return new User(account.getUsername(), account.getPassword(), authorities);
+//        return new User(account.getUsername(), account.getPassword(), authorities);
+        return new CustomUserDetails(account, authorities);
     }
 
 }

@@ -15,7 +15,21 @@
         <h1>YS Board</a></h1>
     </header>
     <nav id="nav">
-        <a href="/">홈</a>
+        <div id="menu-bar">
+            <ul>
+                <li><a href="/">홈</a></li>
+            </ul>
+        </div>
+
+        <div sec:authorize="isAnonymous()" class="account-option">
+            <a href="/login" class="btn btn-primary">로그인</a>
+        </div>
+        
+        <div sec:authorize="isAuthenticated()" class="account-option">
+            <span class="nickname" th:text="${#authentication.principal.nickname} + '님'"></span>
+            <a href="/logout" class="btn btn-danger">로그아웃</a>
+            <a href="/account" class="btn btn-primary">내정보</a>
+        </div>
     </nav>
 
 </th:block>

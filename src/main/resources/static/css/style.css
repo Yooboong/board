@@ -102,3 +102,31 @@ a:hover {
     margin-left: 5px;
     margin-right: 5px;
 }
+
+.account-option {
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
+}
+
+.nickname {
+    font-weight: bold;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+#menu-bar {
+    float: left;
+}
+
+#menu-bar ul {
+    display: flex;
+    list-style: none;
+    gap: 10px;
+}
+
+#menu-bar ul li a {
+    text-decoration-line: none;
+}
+
+
