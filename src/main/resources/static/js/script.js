@@ -20,7 +20,7 @@ function searchPosting() {
     document.getElementById('searchForm').submit(); // 전송
 }
 
-// 게시글 작성, 수정시 validation
+// 게시글 작성시 validation
 function postingValidation() {
     var title = document.getElementById('titleForm').value.trim();
     var content = document.getElementById('contentForm').value.trim();
@@ -37,16 +37,87 @@ function postingValidation() {
         flag = false;
     }
 
+    if (flag == true) {
+        alert('글이 등록되었습니다');
+    }
+
     return flag; // flag가 true면 폼 제출 허용 (onsubmit 으로 submit 전에 실행됨)
 }
 
-// 댓글 작성, 수정시 validation
+// 게시글 수정시 validation
+function postingEditValidation() {
+    var title = document.getElementById('titleForm').value.trim();
+    var content = document.getElementById('contentForm').value.trim();
+
+    var flag = true; // validation flag
+
+    if (title == '') {
+        alert('제목을 입력하세요');
+        flag = false;
+    }
+
+    if (content == '') {
+        alert('내용을 입력하세요');
+        flag = false;
+    }
+
+    if (flag == true) {
+        // 사용자가 수정 작업을 진행하기 전에 확인 알림을 표시 (confirm 함수 사용)
+        var result = confirm('정말 수정하시겠습니까?');
+
+        // 사용자가 아니오를 클릭하면 수정 작업을 취소
+        if (result == false) {
+            alert('수정이 취소되었습니다');
+            return false; // 폼 제출 취소
+        }
+
+        alert('글이 수정되었습니다');
+    }
+
+    return flag; // flag가 true면 폼 제출 허용 (onsubmit 으로 submit 전에 실행됨)
+}
+
+// 게시글 삭제
+function confirmDeletePosting(postingId) {
+    var result = confirm('정말 삭제하시겠습니까?');
+
+    // 사용자가 아니오를 클릭한경우
+    if (result == false) {
+        alert('취소되었습니다');
+        return; // 아무 동작도 하지않음
+    }
+
+    // 사용자가 예를 클릭하면 삭제 작업 진행
+    alert('글이 삭제되었습니다');
+    location.href = '/posting/' + postingId + '/delete';
+}
+
+// 댓글 작성시 validation
 function commentValidation(form) {
     var comment = form.querySelector('textarea[name="comment"]').value.trim();
     if (comment == '') {
         alert('댓글을 입력하세요');
         return false;
     }
+    alert('댓글이 등록되었습니다');
+    return true;
+}
+
+// 댓글 수정시 validation
+function commentEditValidation(form) {
+    var comment = form.querySelector('textarea[name="comment"]').value.trim();
+    if (comment == '') {
+        alert('댓글을 입력하세요');
+        return false;
+    }
+
+    var result = confirm('정말 수정하시겠습니까?');
+    if (result == false) {
+        alert('수정이 취소되었습니다')
+        return false;
+    }
+
+    alert('댓글이 수정되었습니다');
     return true;
 }
 
@@ -70,4 +141,35 @@ function toggleCommentEditForm(button) {
         commentEditForm.style.display = 'none'; // 현재 폼 숨기기
         openCommentEditForm = null; // 현재 폼 추적 해제
     }
+}
+
+// 회원탈퇴시 확인
+function confirmDeleteAccount(form) {
+    var username = form.querySelector('input[id="username"]').value.trim();
+    var password = form.querySelector('input[id="password"]').value.trim();
+
+    var flag = true; // 아이디와 비밀번호가 입력되었는지 여부
+
+    if (username == '') {
+        alert('아이디를 입력하세요');
+        flag = false;
+    }
+
+    if(password == '') {
+        alert('비밀번호를 입력하세요');
+        flag = false;
+    }
+
+    if (flag == false) {
+        return false;
+    }
+
+    var result = confirm("정말로 탈퇴하시겠습니까?");
+
+    if (result == false) {
+        alert('취소되었습니다');
+        return false;
+    }
+
+    return flag;
 }

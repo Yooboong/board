@@ -9,7 +9,7 @@
                     <h4>회원탈퇴</h4>
                 </div>
             </div>
-            <form th:action="@{/account/delete}" th:object="${accountDto}" method="post">
+            <form th:action="@{/account/delete}" th:object="${accountDto}" method="post" onsubmit="return confirmDeleteAccount(this)">
                 <div class="mb-3">
                     <label for="username" class="form-label">아이디</label>
                     <input type="text" th:field="*{username}" id="username" class="form-control">
