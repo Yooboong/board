@@ -1,5 +1,6 @@
 package com.yooboong.board.service;
 
+import com.yooboong.board.dto.AccountDto;
 import com.yooboong.board.dto.CustomUserDetails;
 import com.yooboong.board.entity.Account;
 import com.yooboong.board.repository.AccountRepository;
@@ -37,7 +38,8 @@ public class AccountSecurityService implements UserDetailsService {
         }
 
 //        return new User(account.getUsername(), account.getPassword(), authorities);
-        return new CustomUserDetails(account, authorities);
+        AccountDto accountDto = AccountDto.toDto(account);
+        return new CustomUserDetails(accountDto, authorities);
     }
 
 }

@@ -9,7 +9,7 @@
                     <h4>회원정보</h4>
                 </div>
             </div>
-            <form th:action="@{/account/update}" th:object="${accountDto}" method="post">
+            <form th:action="@{/account/update}" th:object="${accountDto}" method="post" onsubmit="return confirmEditAccount(this)">
                 <div class="mb-3">
                     <label for="email" class="form-label">이메일</label>
                     <input type="email" th:field="*{email}" id="email" class="form-control" readonly>

@@ -9,11 +9,11 @@ import java.util.List;
 
 public class CustomUserDetails implements UserDetails {
 
-    private final Account account;
+    private final AccountDto accountDto;
     private final List<GrantedAuthority> authorities;
 
-    public CustomUserDetails(Account account, List<GrantedAuthority> authorities) {
-        this.account = account;
+    public CustomUserDetails(AccountDto accountDto, List<GrantedAuthority> authorities) {
+        this.accountDto = accountDto;
         this.authorities = authorities;
     }
 
@@ -24,16 +24,22 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return account.getPassword();
+        return accountDto.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return account.getUsername();
+        return accountDto.getUsername();
     }
 
+    // 뷰에 닉네임을 보여주기위해 추가
     public String getNickname() {
-        return account.getNickname();
+        return accountDto.getNickname();
+    }
+
+    // 닉네임 수정시 변경된 닉네임을 뷰에 반영하기위해 추가
+    public void setNickname(String newNickname) {
+        this.accountDto.setNickname(newNickname);
     }
 
 }

@@ -25,23 +25,18 @@ function postingValidation() {
     var title = document.getElementById('titleForm').value.trim();
     var content = document.getElementById('contentForm').value.trim();
 
-    var flag = true; // validation flag
-
     if (title == '') {
         alert('제목을 입력하세요');
-        flag = false;
+        return false;
     }
 
     if (content == '') {
         alert('내용을 입력하세요');
-        flag = false;
+        return false;
     }
 
-    if (flag == true) {
-        alert('글이 등록되었습니다');
-    }
-
-    return flag; // flag가 true면 폼 제출 허용 (onsubmit 으로 submit 전에 실행됨)
+    alert('글이 등록되었습니다');
+    return true; // true 반환시 폼 제출 허용 (onsubmit 으로 submit 전에 실행됨)
 }
 
 // 게시글 수정시 validation
@@ -49,41 +44,37 @@ function postingEditValidation() {
     var title = document.getElementById('titleForm').value.trim();
     var content = document.getElementById('contentForm').value.trim();
 
-    var flag = true; // validation flag
-
     if (title == '') {
         alert('제목을 입력하세요');
-        flag = false;
+        return false;
     }
 
     if (content == '') {
         alert('내용을 입력하세요');
-        flag = false;
+        return false;
     }
 
-    if (flag == true) {
-        // 사용자가 수정 작업을 진행하기 전에 확인 알림을 표시 (confirm 함수 사용)
-        var result = confirm('정말 수정하시겠습니까?');
 
-        // 사용자가 아니오를 클릭하면 수정 작업을 취소
-        if (result == false) {
-            alert('수정이 취소되었습니다');
-            return false; // 폼 제출 취소
-        }
+    // 사용자가 수정 작업을 진행하기 전에 확인 알림을 표시 (confirm 함수 사용)
+    var result = confirm('글을 수정하시겠습니까?');
 
-        alert('글이 수정되었습니다');
+    // 사용자가 아니오를 클릭하면 수정 작업을 취소
+    if (result == false) {
+        alert('수정이 취소되었습니다');
+        return false; // 폼 제출 취소
     }
 
-    return flag; // flag가 true면 폼 제출 허용 (onsubmit 으로 submit 전에 실행됨)
+    alert('글이 수정되었습니다');
+    return true; // true 반환시 폼 제출 허용 (onsubmit 으로 submit 전에 실행됨)
 }
 
 // 게시글 삭제
 function confirmDeletePosting(postingId) {
-    var result = confirm('정말 삭제하시겠습니까?');
+    var result = confirm('글을 삭제하시겠습니까?');
 
     // 사용자가 아니오를 클릭한경우
     if (result == false) {
-        alert('취소되었습니다');
+        alert('삭제가 취소되었습니다');
         return; // 아무 동작도 하지않음
     }
 
@@ -111,7 +102,7 @@ function commentEditValidation(form) {
         return false;
     }
 
-    var result = confirm('정말 수정하시겠습니까?');
+    var result = confirm('댓글을 수정하시겠습니까?');
     if (result == false) {
         alert('수정이 취소되었습니다')
         return false;
@@ -143,33 +134,76 @@ function toggleCommentEditForm(button) {
     }
 }
 
+// 내정보 수정시 확인
+function confirmEditAccount(form) {
+    var nickname = form.querySelector('input[name="nickname"]').value.trim();
+
+    if(nickname == '') {
+        alert('닉네임을 입력하세요');
+        return false;
+    }
+
+    var result = confirm('수정하시겠습니까?');
+    if (result == false) {
+        alert('수정이 취소되었습니다');
+        return false;
+    }
+
+    return true;
+}
+
+// 비밀번호 수정시 확인
+function confirmChangePassword(form) {
+    var currentPassword = form.querySelector('input[name="currentPassword"]').value.trim();
+    var password = form.querySelector('input[name="password"]').value.trim();
+    var passwordConfirm = form.querySelector('input[name="passwordConfirm"]').value.trim();
+
+    if (currentPassword == '') {
+        alert('기존 비밀번호를 입력하세요');
+        return false;
+    }
+
+    if (password == '') {
+        alert('새 비밀번호를 입력하세요');
+        return false;
+    }
+
+    if (passwordConfirm == '') {
+        alert('비밀번호 확인을 입력하세요');
+        return false;
+    }
+
+    var result = confirm('비밀번호를 변경하시겠습니까?');
+
+    if (result == false) {
+        alert('변경이 취소되었습니다');
+        return false;
+    }
+
+    return true;
+}
+
 // 회원탈퇴시 확인
 function confirmDeleteAccount(form) {
-    var username = form.querySelector('input[id="username"]').value.trim();
-    var password = form.querySelector('input[id="password"]').value.trim();
-
-    var flag = true; // 아이디와 비밀번호가 입력되었는지 여부
+    var username = form.querySelector('input[name="username"]').value.trim();
+    var password = form.querySelector('input[name="password"]').value.trim();
 
     if (username == '') {
         alert('아이디를 입력하세요');
-        flag = false;
+        return false;
     }
 
     if(password == '') {
         alert('비밀번호를 입력하세요');
-        flag = false;
-    }
-
-    if (flag == false) {
         return false;
     }
 
-    var result = confirm("정말로 탈퇴하시겠습니까?");
+    var result = confirm('정말 탈퇴하시겠습니까?');
 
     if (result == false) {
-        alert('취소되었습니다');
+        alert('탈퇴가 취소되었습니다');
         return false;
     }
 
-    return flag;
+    return true;
 }

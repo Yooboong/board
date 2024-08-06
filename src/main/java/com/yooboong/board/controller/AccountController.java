@@ -1,10 +1,14 @@
 package com.yooboong.board.controller;
 
 import com.yooboong.board.dto.AccountDto;
+import com.yooboong.board.dto.CustomUserDetails;
 import com.yooboong.board.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -92,6 +96,22 @@ public class AccountController {
         }
 
         AccountDto updated = accountService.updateMyInfo(principal.getName(), accountDto);
+
+        // 업데이트된 닉네임을 뷰에 보여주는 로직
+
+        // 현재 인증된 사용자의 Authentication 객체를 가져옴
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // 인증된 사용자의 세부 정보를 반환(UserDetails 인터페이스를 구현한 객체)
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        // UserDetails 인터페이스를 구현한 CustomUserDetails에 추가로 구현한 setNickname 메소드로 변경된 닉네임 반영
+        ((CustomUserDetails) userDetails).setNickname(updated.getNickname());
+
+        // 업데이트된 정보로 세션 업데이트
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        //
 
         return "redirect:/account";
     }
