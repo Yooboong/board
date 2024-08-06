@@ -134,6 +134,21 @@ function toggleCommentEditForm(button) {
     }
 }
 
+// 댓글 삭제
+function confirmDeleteComment(commentId) {
+    var result = confirm('댓글을 삭제하시겠습니까?');
+
+    // 사용자가 아니오를 클릭한경우
+    if (result == false) {
+        alert('삭제가 취소되었습니다');
+        return; // 아무 동작도 하지않음
+    }
+
+    // 사용자가 예를 클릭하면 삭제 작업 진행
+    alert('댓글이 삭제되었습니다');
+    location.href = '/comment/' + commentId + '/delete';
+}
+
 // 내정보 수정시 확인
 function confirmEditAccount(form) {
     var nickname = form.querySelector('input[name="nickname"]').value.trim();

@@ -2,6 +2,7 @@ package com.yooboong.board.controller;
 
 import com.yooboong.board.dto.CommentDto;
 import com.yooboong.board.dto.PostingDto;
+import com.yooboong.board.role.AccountRole;
 import com.yooboong.board.service.CommentService;
 import com.yooboong.board.service.PostingService;
 import jakarta.validation.Valid;
@@ -9,6 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.util.Collection;
 import java.util.List;
 
 @Controller
@@ -136,7 +142,18 @@ public class PostingController {
     public String delete(Principal principal,
                          @PathVariable("id") Long id) {
         PostingDto target = postingService.read(id);
-        if (!target.getUsername().equals(principal.getName()))
+
+        // 권한이 관리자인 경우 삭제 가능하도록 구현
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        // 관리자 여부 확인
+        boolean isAdmin = authorities.contains(new SimpleGrantedAuthority(AccountRole.ADMIN.getValue()));
+
+        //
+
+        if (!isAdmin && !target.getUsername().equals(principal.getName())) // 관리자가 아니면서 작성자 본인이 아닌경우
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "게시글 삭제 권한이 없음");
 
         postingService.delete(id);

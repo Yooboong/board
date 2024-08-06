@@ -11,9 +11,9 @@
         <div class="card-body" th:text="${comment.comment}" style="white-space: pre-line;"></div>
 
         <!-- 수정 버튼 및 수정 폼 표시용 버튼 -->
-        <div class="flex-container" th:if="${#authentication.name == comment.username}" style="margin-right: 5px;">
-            <button type="button" class="btn btn-primary" onclick="toggleCommentEditForm(this)">수정</button>
-            <button type="button" class="btn btn-danger" th:onclick="|location.href='/comment/'+${comment.id}+'/delete'|">삭제</button>
+        <div class="flex-container" style="margin-right: 5px;">
+            <button type="button" class="btn btn-primary" th:if="${#authentication.name == comment.username}" onclick="toggleCommentEditForm(this)">수정</button>
+            <button type="button" class="btn btn-danger" th:if="${#authentication.name == comment.username or #strings.contains(#authentication.authorities, 'ROLE_ADMIN')}" th:onclick="|confirmDeleteComment(${comment.id})|">삭제</button>
         </div>
 
         <!-- 댓글 수정 폼 (초기에는 숨김) -->

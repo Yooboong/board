@@ -27,8 +27,8 @@
         
         <div sec:authorize="isAuthenticated()" class="account-option">
             <span class="nickname" th:text="${#authentication.principal.nickname} + '님'"></span>
-            <a href="/logout" class="btn btn-danger">로그아웃</a>
             <a href="/account" class="btn btn-primary">내정보</a>
+            <a href="/logout" class="btn btn-danger">로그아웃</a>
         </div>
     </nav>
 
