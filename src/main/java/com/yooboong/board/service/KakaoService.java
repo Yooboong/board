@@ -3,7 +3,9 @@ package com.yooboong.board.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yooboong.board.oauth.KakaoToken;
+import com.yooboong.board.oauth.KakaoUserInfo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -17,8 +19,15 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class KakaoService {
 
-    private final String REST_API_KEY = "f057e561048b05be1c0bef3deea37919";
-    private final String REDIRECT_URI = "http://127.0.0.1:8080/auth/kakao/callback";
+    // @Value는 application.properties에 있는 값을 가져오기위한 어노테이션
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
+    private String REST_API_KEY;
+
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
+    private String REDIRECT_URI;
+
+    @Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
+    private String CLIENT_SECRET;
 
     // 카카오에서 반환한 인가코드 받아서 토큰을 요청
     public KakaoToken requestToken(String code) {
@@ -32,6 +41,7 @@ public class KakaoService {
         body.add("client_id", REST_API_KEY);
         body.add("redirect_uri", REDIRECT_URI);
         body.add("code", code);
+        body.add("client_secret", CLIENT_SECRET);
 
         // header + body
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(body, headers);
@@ -59,7 +69,7 @@ public class KakaoService {
     }
 
     // Access Token 값으로 사용자 정보 요청하기
-    public String requestUserInfo(String accessToken) {
+    public KakaoUserInfo requestUserInfo(String accessToken) {
         // header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
@@ -77,7 +87,17 @@ public class KakaoService {
                 String.class // 요청시 반환되는 데이터타입
         );
 
-        return response.getBody();
+        // JSON 데이터를 객체로 변환하기 위해 ObjectMapper 사용
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        KakaoUserInfo kakaoUserInfo = null;
+        try {
+            kakaoUserInfo = objectMapper.readValue(response.getBody(), KakaoUserInfo.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return kakaoUserInfo;
     }
 
 }

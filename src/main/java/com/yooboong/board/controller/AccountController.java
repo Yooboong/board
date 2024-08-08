@@ -3,28 +3,22 @@ package com.yooboong.board.controller;
 import com.yooboong.board.dto.AccountDto;
 import com.yooboong.board.dto.CustomUserDetails;
 import com.yooboong.board.oauth.KakaoToken;
+import com.yooboong.board.oauth.KakaoUserInfo;
 import com.yooboong.board.service.AccountService;
 import com.yooboong.board.service.KakaoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.client.RestTemplate;
 
 import java.security.Principal;
 
@@ -42,7 +36,9 @@ public class AccountController {
         // 카카오에서 반환한 인가코드 받아서 토큰을 요청
         KakaoToken kakaoToken = kakaoService.requestToken(code);
 
-        return kakaoService.requestUserInfo(kakaoToken.getAccess_token());
+        // Access Token 으로 사용자 정보 요청
+        KakaoUserInfo kakaoUserInfo = kakaoService.requestUserInfo(kakaoToken.getAccess_token());
+        return kakaoUserInfo.toString();
     }
 
     @GetMapping("/signup") // 회원가입 페이지

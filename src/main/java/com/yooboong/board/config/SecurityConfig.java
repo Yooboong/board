@@ -28,6 +28,9 @@ public class SecurityConfig {
                 .formLogin((formLogin) -> formLogin // 로그인 설정
                         .loginPage("/login") // 로그인 페이지 url, GET, 인증이 필요한 주소 요청시 실행됨
                         .defaultSuccessUrl("/")) // 성공시 이동할 url
+                .oauth2Login(oauth2Login -> oauth2Login
+                        .loginPage("/login") // OAuth2 로그인 페이지 설정
+                        .defaultSuccessUrl("/"))
                 .logout((logout) -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout")) // 로그아웃 url 설정
                         .logoutSuccessUrl("/") // 로그아웃 성공 시 루트페이지("/")로 이동
