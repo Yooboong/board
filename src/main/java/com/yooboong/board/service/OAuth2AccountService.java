@@ -1,32 +1,42 @@
 package com.yooboong.board.service;
 
 import com.yooboong.board.dto.AccountDto;
-import com.yooboong.board.security.CustomUserDetails;
 import com.yooboong.board.entity.Account;
+import com.yooboong.board.oauth.CustomOAuth2User;
 import com.yooboong.board.repository.AccountRepository;
 import com.yooboong.board.role.AccountRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class AccountSecurityService implements UserDetailsService {
+public class OAuth2AccountService extends DefaultOAuth2UserService {
 
     private final AccountRepository accountRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Account account = accountRepository.findByUsername(username);
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        OAuth2User oAuth2User = super.loadUser(userRequest);
+        Map<String, Object> attributes = oAuth2User.getAttributes();
+
+        String id = String.valueOf(attributes.get("id"));
+        Account account = accountRepository.findByTokenId(id);
+
         if (account == null) {
-            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다.");
+            account = Account.builder()
+                    .tokenId(id)
+                    .permit(0)
+                    .build();
         }
 
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -36,9 +46,9 @@ public class AccountSecurityService implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority(AccountRole.USER.getValue()));
         }
 
-//        return new User(account.getUsername(), account.getPassword(), authorities);
         AccountDto accountDto = AccountDto.toDto(account);
-        return new CustomUserDetails(accountDto, authorities);
+
+        return new CustomOAuth2User(accountDto, attributes, authorities);
     }
 
 }

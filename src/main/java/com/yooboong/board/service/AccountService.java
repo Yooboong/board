@@ -33,6 +33,22 @@ public class AccountService {
         return createdDto;
     }
 
+    @Transactional
+    public AccountDto createOAuth2(String tokenId) {
+        AccountDto accountDto = AccountDto.builder()
+                .username(tokenId)
+                .password(passwordEncoder.encode(tokenId))
+                .tokenId(tokenId)
+                .build();
+
+        Account accountEntity = Account.toEntity(accountDto);
+
+        Account created = accountRepository.save(accountEntity);
+
+        AccountDto createdDto = AccountDto.toDto(created);
+        return createdDto;
+    }
+
     public AccountDto getAccount(String username) {
         Account accountEntity = accountRepository.findByUsername(username);
         if (accountEntity == null)
@@ -42,9 +58,31 @@ public class AccountService {
         return accountDto;
     }
 
+    public AccountDto getOAuth2Account(String tokenId) {
+        Account accountEntity = accountRepository.findByTokenId(tokenId);
+        if (accountEntity == null)
+            return null;
+
+        AccountDto accountDto = AccountDto.toDto(accountEntity);
+        return accountDto;
+    }
+
     @Transactional
     public AccountDto updateMyInfo(String username, AccountDto accountDto) {
         Account target = accountRepository.findByUsername(username);
+        if (target == null)
+            throw new IllegalArgumentException("회원정보 수정 실패! 해당하는 계정이 존재하지 않음");
+
+        target.updateInfo(accountDto);
+        Account updated = accountRepository.save(target);
+
+        AccountDto updatedDto = AccountDto.toDto(updated);
+        return updatedDto;
+    }
+
+    @Transactional
+    public AccountDto updateOAuth2MyInfo(String tokenId, AccountDto accountDto) {
+        Account target = accountRepository.findByTokenId(tokenId);
         if (target == null)
             throw new IllegalArgumentException("회원정보 수정 실패! 해당하는 계정이 존재하지 않음");
 

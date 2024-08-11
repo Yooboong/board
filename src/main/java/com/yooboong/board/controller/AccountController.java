@@ -1,17 +1,22 @@
 package com.yooboong.board.controller;
 
 import com.yooboong.board.dto.AccountDto;
-import com.yooboong.board.dto.CustomUserDetails;
+import com.yooboong.board.security.CustomUserDetails;
 import com.yooboong.board.oauth.KakaoToken;
 import com.yooboong.board.oauth.KakaoUserInfo;
 import com.yooboong.board.service.AccountService;
 import com.yooboong.board.service.KakaoService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,16 +35,40 @@ public class AccountController {
 
     private final KakaoService kakaoService;
 
-    @GetMapping("/auth/kakao/callback") // 인가코드 받기
-    @ResponseBody
-    public String kakaoCallback(@RequestParam(name = "code") String code) {
-        // 카카오에서 반환한 인가코드 받아서 토큰을 요청
-        KakaoToken kakaoToken = kakaoService.requestToken(code);
+    private final AuthenticationManager authenticationManager;
 
-        // Access Token 으로 사용자 정보 요청
-        KakaoUserInfo kakaoUserInfo = kakaoService.requestUserInfo(kakaoToken.getAccess_token());
-        return kakaoUserInfo.toString();
-    }
+//    @GetMapping("/login/oauth2/code/kakao") // 인가코드 받기
+//    public String kakaoCallback(@RequestParam(name = "code") String code,
+//                                Model model,
+//                                HttpSession session) {
+//        // 카카오에서 반환한 인가코드 받아서 토큰을 요청
+//        KakaoToken kakaoToken = kakaoService.requestToken(code);
+//
+//        // Access Token 으로 사용자 정보 요청
+//        KakaoUserInfo kakaoUserInfo = kakaoService.requestUserInfo(kakaoToken.getAccess_token());
+//
+//        AccountDto accountDto = accountService.getOAuth2Account(kakaoUserInfo.getId());
+//        if (accountDto == null) { // 회원이 아닌경우
+//            // 회원가입 후 닉네임설정
+//            AccountDto created = accountService.createOAuth2(kakaoUserInfo.getId());
+//            model.addAttribute("accountDto", created);
+//            session.setAttribute("tokenId", kakaoUserInfo.getId());
+//            return "account/oauth2info";
+//        }
+//
+//        if (accountDto != null && accountDto.getNickname() == null) { // 닉네임 설정이 안되어있는경우
+//            model.addAttribute("accountDto", accountDto);
+//            session.setAttribute("tokenId", kakaoUserInfo.getId());
+//            return "account/oauth2info";
+//        }
+//
+//        // 로그인 처리
+//        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(accountDto.getUsername(),accountDto.getTokenId()));
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//        session.setAttribute("tokenId", kakaoUserInfo.getId());
+//        return "redirect:/";
+//    }
 
     @GetMapping("/signup") // 회원가입 페이지
     public String signupForm(AccountDto accountDto) { // th:object로 뷰에 바인딩 시키기위해 매개변수 추가
@@ -96,6 +125,16 @@ public class AccountController {
     }
 
     @PreAuthorize("isAuthenticated()")
+    @GetMapping("/account/oauth2")
+    public String showOAuth2MyInfo(@AuthenticationPrincipal OAuth2User oAuth2User,
+                                   HttpSession session,
+                                   Model model) {
+        AccountDto accountDto = accountService.getOAuth2Account((String) session.getAttribute("tokenId"));
+        model.addAttribute("accountDto",accountDto);
+        return "account/oauth2info";
+    }
+
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/account/update") // 비밀번호를 제외한 내정보 수정
     public String updateMyInfo(Principal principal,
                                @Valid AccountDto accountDto,
@@ -131,6 +170,27 @@ public class AccountController {
         //
 
         return "redirect:/account";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/account/oauth2/update")
+    public String updateOAuth2MyInfo(@Valid AccountDto accountDto,
+                               BindingResult bindingResult,
+                               Model model) {
+        if (bindingResult.hasFieldErrors("nickname")) {
+            model.addAttribute("accountDto", accountDto);
+            return "account/oauth2info";
+        }
+
+        if (accountService.checkDuplicateNickname(accountDto.getNickname())) { // 이미 사용중인 닉네임을 작성한경우
+            bindingResult.rejectValue("nickname", "duplicateNickname", "이미 사용중인 닉네임 입니다");
+            model.addAttribute("accountDto", accountDto);
+            return "account/oauth2info";
+        }
+
+        AccountDto updated = accountService.updateOAuth2MyInfo(accountDto.getTokenId(), accountDto);
+
+        return "redirect:/account/oauth2";
     }
 
     @PreAuthorize("isAuthenticated()")

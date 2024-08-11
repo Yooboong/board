@@ -13,6 +13,8 @@ import lombok.*;
 public class AccountDto {
     private Long id;
 
+    private String tokenId;
+
     @NotBlank(message = "이메일을 입력하세요")
     @Email(message = "이메일 형식이 올바르지 않습니다")
     private String email;
@@ -45,6 +47,7 @@ public class AccountDto {
                 .password(entity.getPassword())
                 .nickname(entity.getNickname())
                 .permit(entity.getPermit())
+                .tokenId(entity.getTokenId())
                 .build();
     }
 }

@@ -1,7 +1,11 @@
-package com.yooboong.board.config;
+package com.yooboong.board.security.config;
 
+import com.yooboong.board.service.OAuth2AccountService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -10,13 +14,22 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 @Configuration // 스프링의 환경 설정 파일, 스프링 시큐리티를 설정하기 위해 사용
 @EnableWebSecurity // 모든 요청 URL이 스프링 시큐리티의 제어를 받도록 함, 스프링 시큐리티 활성화
 @EnableMethodSecurity(prePostEnabled = true) // @PreAuthorize 애너테이션이 동작할 수 있도록하는 어노테이션
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    @Autowired
+    private OAuth2AccountService oAuth2AccountService;
 
     @Bean // 스프링에 의해 생성 및 관리되는 객체임을 선언(@Configuration과 함께 사용)
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -28,13 +41,15 @@ public class SecurityConfig {
                 .formLogin((formLogin) -> formLogin // 로그인 설정
                         .loginPage("/login") // 로그인 페이지 url, GET, 인증이 필요한 주소 요청시 실행됨
                         .defaultSuccessUrl("/")) // 성공시 이동할 url
-                .oauth2Login(oauth2Login -> oauth2Login
-                        .loginPage("/login") // OAuth2 로그인 페이지 설정
-                        .defaultSuccessUrl("/"))
                 .logout((logout) -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout")) // 로그아웃 url 설정
                         .logoutSuccessUrl("/") // 로그아웃 성공 시 루트페이지("/")로 이동
-                        .invalidateHttpSession(true)); // 로그아웃 시 생성된 사용자 세션 삭제
+                        .invalidateHttpSession(true)) // 로그아웃 시 생성된 사용자 세션 삭제
+                .oauth2Login(oauth2Login -> oauth2Login
+                        .loginPage("/login")
+                        .successHandler(successHandler())
+                        .defaultSuccessUrl("/")
+                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(oAuth2AccountService)));
         return http.build();
     }
 
@@ -50,6 +65,25 @@ public class SecurityConfig {
         // 인증과 권한 부여 프로세스를 처리
     AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler successHandler() {
+        return ((request, response, authentication) -> {
+            DefaultOAuth2User defaultOAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
+
+            String id = defaultOAuth2User.getAttributes().get("id").toString();
+            String body = """
+                    {"id":"%s"}
+                    """.formatted(id);
+
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+
+            PrintWriter writer = response.getWriter();
+            writer.println(body);
+            writer.flush();
+        });
     }
 
 }
