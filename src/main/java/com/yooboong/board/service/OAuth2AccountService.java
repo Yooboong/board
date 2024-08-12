@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,19 +25,32 @@ public class OAuth2AccountService extends DefaultOAuth2UserService {
 
     private final AccountRepository accountRepository;
 
+    @Transactional
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
-        String id = String.valueOf(attributes.get("id"));
-        Account account = accountRepository.findByTokenId(id);
+        String accessToken = userRequest.getAccessToken().getTokenValue();
+
+        String oAuth2Id = String.valueOf(attributes.get("id"));
+        Account account = accountRepository.findByOAuth2Id(oAuth2Id);
 
         if (account == null) {
             account = Account.builder()
-                    .tokenId(id)
+                    .oAuth2Id(oAuth2Id)
+                    .accessToken(accessToken)
+                    .email(oAuth2Id)
+                    .username("kakao_" + oAuth2Id)
+                    .password(oAuth2Id)
+                    .nickname("kakao_" + oAuth2Id)
                     .permit(0)
                     .build();
+
+            account = accountRepository.save(account);
+        } else {
+            accountRepository.updateAccessToken(oAuth2Id, accessToken);
+            account = accountRepository.findByOAuth2Id(oAuth2Id);
         }
 
         List<GrantedAuthority> authorities = new ArrayList<>();

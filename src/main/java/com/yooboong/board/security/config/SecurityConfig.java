@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -14,13 +13,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 
 @Configuration // 스프링의 환경 설정 파일, 스프링 시큐리티를 설정하기 위해 사용
 @EnableWebSecurity // 모든 요청 URL이 스프링 시큐리티의 제어를 받도록 함, 스프링 시큐리티 활성화
@@ -38,18 +33,17 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/**")) // 해당 경로에 대한 인가 설정 지정
                         .permitAll()) //해당 경로에 대한 모든 요청을 인가
                 .csrf(AbstractHttpConfigurer::disable)
+                .oauth2Login(oauth2Login -> oauth2Login // OAuth2 인증 (kakao, google, naver 등)
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/")
+                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(oAuth2AccountService)))
                 .formLogin((formLogin) -> formLogin // 로그인 설정
                         .loginPage("/login") // 로그인 페이지 url, GET, 인증이 필요한 주소 요청시 실행됨
                         .defaultSuccessUrl("/")) // 성공시 이동할 url
                 .logout((logout) -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout")) // 로그아웃 url 설정
                         .logoutSuccessUrl("/") // 로그아웃 성공 시 루트페이지("/")로 이동
-                        .invalidateHttpSession(true)) // 로그아웃 시 생성된 사용자 세션 삭제
-                .oauth2Login(oauth2Login -> oauth2Login
-                        .loginPage("/login")
-                        .successHandler(successHandler())
-                        .defaultSuccessUrl("/")
-                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(oAuth2AccountService)));
+                        .invalidateHttpSession(true)); // 로그아웃 시 생성된 사용자 세션 삭제
         return http.build();
     }
 
@@ -65,25 +59,6 @@ public class SecurityConfig {
         // 인증과 권한 부여 프로세스를 처리
     AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    @Bean
-    public AuthenticationSuccessHandler successHandler() {
-        return ((request, response, authentication) -> {
-            DefaultOAuth2User defaultOAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
-
-            String id = defaultOAuth2User.getAttributes().get("id").toString();
-            String body = """
-                    {"id":"%s"}
-                    """.formatted(id);
-
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-
-            PrintWriter writer = response.getWriter();
-            writer.println(body);
-            writer.flush();
-        });
     }
 
 }

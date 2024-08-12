@@ -33,22 +33,6 @@ public class AccountService {
         return createdDto;
     }
 
-    @Transactional
-    public AccountDto createOAuth2(String tokenId) {
-        AccountDto accountDto = AccountDto.builder()
-                .username(tokenId)
-                .password(passwordEncoder.encode(tokenId))
-                .tokenId(tokenId)
-                .build();
-
-        Account accountEntity = Account.toEntity(accountDto);
-
-        Account created = accountRepository.save(accountEntity);
-
-        AccountDto createdDto = AccountDto.toDto(created);
-        return createdDto;
-    }
-
     public AccountDto getAccount(String username) {
         Account accountEntity = accountRepository.findByUsername(username);
         if (accountEntity == null)
@@ -58,10 +42,11 @@ public class AccountService {
         return accountDto;
     }
 
-    public AccountDto getOAuth2Account(String tokenId) {
-        Account accountEntity = accountRepository.findByTokenId(tokenId);
+    public AccountDto getOAuth2Account(String oAuth2Id) {
+        oAuth2Id = oAuth2Id.replace("kakao_", "");
+        Account accountEntity = accountRepository.findByOAuth2Id(oAuth2Id);
         if (accountEntity == null)
-            return null;
+            throw new IllegalArgumentException("회원정보 조회 실패! 해당하는 계정이 존재하지 않음");
 
         AccountDto accountDto = AccountDto.toDto(accountEntity);
         return accountDto;
@@ -81,8 +66,9 @@ public class AccountService {
     }
 
     @Transactional
-    public AccountDto updateOAuth2MyInfo(String tokenId, AccountDto accountDto) {
-        Account target = accountRepository.findByTokenId(tokenId);
+    public AccountDto updateOAuth2MyInfo(String oAuth2Id, AccountDto accountDto) {
+        oAuth2Id = oAuth2Id.replace("kakao_", "");
+        Account target = accountRepository.findByOAuth2Id(oAuth2Id);
         if (target == null)
             throw new IllegalArgumentException("회원정보 수정 실패! 해당하는 계정이 존재하지 않음");
 
@@ -109,6 +95,20 @@ public class AccountService {
     @Transactional
     public void delete(String username) {
         Account target = accountRepository.findByUsername(username);
+        if (target == null)
+            throw new IllegalArgumentException("계정 삭제 실패! 해당하는 계정이 존재하지 않음");
+
+        // 사용자가 작성한 댓글, 게시글 모두 삭제해줘야 함
+        commentRepository.deleteByAuthorId(target.getId());
+        postingRepository.deleteByAuthorId(target.getId());
+
+        accountRepository.delete(target);
+    }
+
+    @Transactional
+    public void deleteOAuth2(String oAuth2Id) {
+        oAuth2Id = oAuth2Id.replace("kakao_", "");
+        Account target = accountRepository.findByOAuth2Id(oAuth2Id);
         if (target == null)
             throw new IllegalArgumentException("계정 삭제 실패! 해당하는 계정이 존재하지 않음");
 

@@ -31,7 +31,7 @@ public class CustomOAuth2User implements OAuth2User {
 
     @Override
     public String getName() {
-        return accountDto.getTokenId();
+        return accountDto.getUsername();
     }
 
     // 뷰에 닉네임을 보여주기위해 추가

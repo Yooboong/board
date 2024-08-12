@@ -19,23 +19,26 @@ public class Account extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String username; // 사용자 아이디
 
-    @Column
+    @Column(nullable = false)
     private String password; // 사용자 비밀번호
 
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String nickname;
 
     @Column(nullable = false)
     private Integer permit; // 권한 0 : 일반사용자, 1 : 관리자
 
     @Column(unique = true)
-    private String tokenId;
+    private String oAuth2Id;
+
+    @Column
+    private String accessToken;
 
     public static Account toEntity(AccountDto accountDto) {
         return Account.builder()
@@ -44,15 +47,13 @@ public class Account extends BaseTimeEntity {
                 .password(accountDto.getPassword())
                 .nickname(accountDto.getNickname())
                 .permit(0) // 생성시 일반사용자 권한으로
-                .tokenId(accountDto.getTokenId())
+                .oAuth2Id(accountDto.getOAuth2Id())
+                .accessToken(accountDto.getAccessToken())
                 .build();
     }
 
     public void updateInfo(AccountDto accountDto) {
-        if (this.nickname != null && !this.nickname.equals(accountDto.getNickname()))
-            this.nickname = accountDto.getNickname();
-        if (this.nickname == null && accountDto.getNickname() != null)
-            this.nickname = accountDto.getNickname();
+        this.nickname = accountDto.getNickname();
     }
 
     public void updatePassword(String password) {

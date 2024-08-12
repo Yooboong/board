@@ -16,10 +16,9 @@
                     <span class="valid" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}"></span>
                 </div>
 
-                <input type="hidden" th:field="*{tokenId}">
-
                 <div class="flex-container">
                     <button type="submit" class="btn btn-primary">수정</button>
+                    <button type="button" class="btn btn-danger" th:if="${#strings.contains(#authentication.name, 'kakao_')}" onclick="deleteAndKakaoUnlink()">회원탈퇴</button>
                     <button type="button" class="btn btn-info btn-info-custom" th:onclick="|location.href='/'|">돌아가기</button>
                 </div>
             </form>

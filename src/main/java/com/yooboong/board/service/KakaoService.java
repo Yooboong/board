@@ -100,4 +100,24 @@ public class KakaoService {
         return kakaoUserInfo;
     }
 
+    public String unlinkOAuth2(String accessToken) { // 카카오 연결끊기 (서비스 탈퇴)
+        // header 생성
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded");
+        headers.add("Authorization", "Bearer " + accessToken);
+
+        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(headers);
+
+        // http 요청
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange(
+                "https://kapi.kakao.com/v1/user/unlink", // 요청할 서버 주소
+                HttpMethod.POST, // post 방식 요청
+                httpEntity, // 요청시 보낼 데이터
+                String.class // 요청시 반환되는 데이터타입
+        );
+
+        return response.getBody();
+    }
+
 }

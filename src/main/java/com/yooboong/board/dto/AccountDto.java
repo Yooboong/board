@@ -13,7 +13,9 @@ import lombok.*;
 public class AccountDto {
     private Long id;
 
-    private String tokenId;
+    private String oAuth2Id;
+
+    private String accessToken;
 
     @NotBlank(message = "이메일을 입력하세요")
     @Email(message = "이메일 형식이 올바르지 않습니다")
@@ -47,7 +49,8 @@ public class AccountDto {
                 .password(entity.getPassword())
                 .nickname(entity.getNickname())
                 .permit(entity.getPermit())
-                .tokenId(entity.getTokenId())
+                .oAuth2Id(entity.getOAuth2Id())
+                .accessToken(entity.getAccessToken())
                 .build();
     }
 }
