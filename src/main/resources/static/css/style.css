@@ -126,7 +126,8 @@ a:hover {
 }
 
 #menu-bar ul li a {
-    text-decoration-line: none;
+    text-decoration: none;
+    color: inherit;
 }
 
 #login-page-btn button {

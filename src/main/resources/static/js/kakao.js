@@ -21,10 +21,17 @@ function ClearSessionAndKakaoLogout() { // 로그아웃으로 세션 삭제 후,
 }
 
 function deleteAndKakaoUnlink() { // 회원탈퇴 (DB삭제, unlink 후 logout)
+    var result = confirm("정말 탈퇴하시겠습니까?")
+
+    if (result == false) {
+        window.alert('탈퇴가 취소되었습니다')
+        return;
+    }
+
     fetch('/account/oauth2/delete', { method: 'POST' })
         .then(response => {
             if (response.ok) {
-                window.alert("회원탈퇴 되었습니다");
+                window.alert('탈퇴되었습니다');
                 window.location.href = '/logout'; // 로그아웃으로 세션 삭제
             }
         })
