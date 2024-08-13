@@ -18,7 +18,7 @@
 
                 <div class="flex-container">
                     <button type="submit" class="btn btn-primary">수정</button>
-                    <button type="button" class="btn btn-danger" th:if="${#strings.contains(#authentication.name, 'kakao_')}" onclick="deleteAndKakaoUnlink()">회원탈퇴</button>
+                    <button type="button" class="btn btn-danger" th:if="${#authentication.principal instanceof T(org.springframework.security.oauth2.core.user.OAuth2User)}" onclick="deleteAndKakaoUnlink()">회원탈퇴</button>
                     <button type="button" class="btn btn-info btn-info-custom" th:onclick="|location.href='/'|">돌아가기</button>
                 </div>
             </form>

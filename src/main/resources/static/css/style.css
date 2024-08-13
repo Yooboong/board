@@ -11,6 +11,12 @@ html, body {
     font-size: 5em;
 }
 
+#header a {
+    text-decoration: none;
+    color: inherit;
+    font-weight: normal;
+}
+
 #nav {
     background: #f5f5f5;
     padding: 12px;
@@ -37,6 +43,11 @@ html, body {
     color:#ffffff;
     text-align:center;
     line-height:50px;
+}
+
+#footer a {
+    text-decoration: none;
+    color: inherit;
 }
 
 tbody tr td a {

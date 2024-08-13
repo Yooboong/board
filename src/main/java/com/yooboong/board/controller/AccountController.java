@@ -114,6 +114,7 @@ public class AccountController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/account/update") // 비밀번호를 제외한 내정보 수정
     public String updateMyInfo(@AuthenticationPrincipal CustomUserDetails userDetails,
+                               // @AuthenticationPrincipal은 서비스의 로그인 메소드에서 반환한 값을 직접 파라미터로 받아 인증된 유저의 정보를 사용할 수 있게하는 어노테이션
                                @Valid AccountDto accountDto,
                                BindingResult bindingResult,
                                Model model) {

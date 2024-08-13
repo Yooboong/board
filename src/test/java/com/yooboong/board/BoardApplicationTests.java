@@ -29,14 +29,15 @@ class BoardApplicationTests {
 
     @Test
     void testData() {
-        AccountDto accountDto = AccountDto.builder()
+        Account admin = Account.builder()
                 .email("yooboong22@gmail.com")
                 .username("admin")
                 .password(passwordEncoder.encode("yooboong22"))
                 .nickname("관리자")
+                .permit(1)
                 .build();
 
-        Account account = accountRepository.save(Account.toEntity(accountDto));
+        admin = accountRepository.save(admin);
 
         for (int i = 1; i <= 250; i++) {
             String title = String.format("테스트 제목:[%03d]", i);
@@ -47,7 +48,7 @@ class BoardApplicationTests {
                     .content(content)
                     .build();
 
-            Posting posting = Posting.toEntity(account, postingDto);
+            Posting posting = Posting.toEntity(admin, postingDto);
 
             postingRepository.save(posting);
 

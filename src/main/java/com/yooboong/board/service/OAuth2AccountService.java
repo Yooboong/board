@@ -40,7 +40,7 @@ public class OAuth2AccountService extends DefaultOAuth2UserService {
             account = Account.builder()
                     .oAuth2Id(oAuth2Id)
                     .accessToken(accessToken)
-                    .email(oAuth2Id)
+                    .email("kakao_" + oAuth2Id)
                     .username("kakao_" + oAuth2Id)
                     .password(oAuth2Id)
                     .nickname("kakao_" + oAuth2Id)
