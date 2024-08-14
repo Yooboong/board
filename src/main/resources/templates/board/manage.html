@@ -1,0 +1,43 @@
+<html layout:decorate="~{/layout/layout}">
+<th:block layout:fragment="content">
+
+    <div id="content">
+
+        <div class="account">
+            <div class="my-3 border-bottom">
+                <div>
+                    <h4>게시판 관리</h4>
+                </div>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="text-center">번호</th>
+                        <th class="col-md-6 text-center">이름</th>
+                        <th class="text-center"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="board : ${boardList}">
+                        <td th:text="${board.id}" class="text-center"></td>
+                        <td th:text="${board.name}" class="text-center"></td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-primary" th:onclick="|location.href='${board.id}/edit'|">수정</button>
+                            <button type="button" class="btn btn-danger" th:data="${board.id}" onclick="deleteBoard(this)">삭제</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="flex-container">
+                <button type="button" class="btn btn-primary" th:onclick="|location.href='/board/new'|">생성</button>
+                <button type="button" class="btn btn-info btn-info-custom" th:onclick="|location.href='/'|">돌아가기
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+</th:block>
+</html>

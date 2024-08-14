@@ -222,3 +222,22 @@ function confirmDeleteAccount(form) {
 
     return true;
 }
+
+function deleteBoard(button) {
+    var result = confirm('정말 삭제하시겠습니까?');
+
+    if (result == false) {
+        return;
+    }
+
+    var boardId = button.getAttribute('data');
+
+    fetch('/board/'+boardId+'/delete', {method: 'POST'})
+        .then(response => {
+            if (response.ok) {
+                window.alert('게시판이 삭제되었습니다');
+                window.location.href = '/board/manage';
+            }
+        })
+        .catch(error => console.error('delete failed:', error));
+}

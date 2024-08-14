@@ -82,7 +82,7 @@ public class PostingController {
 
         PostingDto created = postingService.create(principal.getName(), input);
 
-        return "redirect:/posting/";
+        return "redirect:/";
     }
 
     @GetMapping("/{id}") // 게시글 조회
@@ -158,7 +158,7 @@ public class PostingController {
 
         postingService.delete(id);
 
-        return "redirect:/posting/";
+        return "redirect:/";
     }
 
 }

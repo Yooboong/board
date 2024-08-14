@@ -1,0 +1,29 @@
+<html layout:decorate="~{/layout/layout}">
+<th:block layout:fragment="content">
+
+    <div id="content">
+
+        <div class="account">
+            <div class="my-3 border-bottom">
+                <div>
+                    <h4>게시판 생성</h4>
+                </div>
+            </div>
+            <form th:action="@{/board/create}" th:object="${boardDto}" method="post">
+                <div class="mb-3">
+                    <label for="name" class="form-label">게시판 이름</label>
+                    <input type="text" th:field="*{name}" id="name" class="form-control">
+                    <span class="valid" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+                </div>
+
+                <div class="flex-container">
+                    <button type="submit" class="btn btn-primary">생성</button>
+                    <button type="button" class="btn btn-info btn-info-custom" th:onclick="|location.href='/board/manage'|">돌아가기</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</th:block>
+</html>
