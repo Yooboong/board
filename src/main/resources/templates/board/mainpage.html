@@ -27,7 +27,7 @@
                 <tr th:each="posting, loop : ${postingDtoPage}">
                     <td class="text-center" th:text="${postingDtoPage.getTotalElements - (postingDtoPage.number * postingDtoPage.size) - loop.index}"></td>
                     <td>
-                        <a th:text="${posting.title}" th:href="@{'/posting/'+${posting.id}}"></a>
+                        <a th:text="${posting.title}" th:href="@{'/board/'+${boardId}+'/posting/'+${posting.id}}"></a>
                         <span class="text-danger small ms-2"
                               th:if="${#lists.size(posting.commentDtoList) > 0}"
                               th:text="${'[' + #lists.size(posting.commentDtoList) + ']'}"></span>
@@ -57,14 +57,15 @@
             </ul>
         </div>
 
-        <form th:action="@{/posting/}" method="get" id="searchForm">
+        <form th:action="@{'/board/' + ${boardId}}" method="get" id="searchForm">
+            <input type="hidden" name="id" id="boardId" th:value="${boardId}">
             <input type="hidden" name="keyword" id="keyword" th:value="${keyword}">
             <input type="hidden" name="page" id="page" th:value="${currentPage}">
             <input type="hidden" name="searchOption" id="searchOption" th:value="${searchOption}">
         </form>
 
         <div class="flex-container">
-            <button type="button" class="btn btn-primary" th:onclick="|location.href='/posting/new'|">글쓰기</button>
+            <button type="button" class="btn btn-primary" th:onclick="|location.href='/board/'+${boardId}+'/new'|">글쓰기</button>
         </div>
     </div>
 

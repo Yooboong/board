@@ -69,7 +69,7 @@ function postingEditValidation() {
 }
 
 // 게시글 삭제
-function confirmDeletePosting(postingId) {
+function confirmDeletePosting(boardId, postingId) {
     var result = confirm('글을 삭제하시겠습니까?');
 
     // 사용자가 아니오를 클릭한경우
@@ -80,7 +80,7 @@ function confirmDeletePosting(postingId) {
 
     // 사용자가 예를 클릭하면 삭제 작업 진행
     alert('글이 삭제되었습니다');
-    location.href = '/posting/' + postingId + '/delete';
+    location.href = '/board/' + boardId + '/posting/' + postingId + '/delete';
 }
 
 // 댓글 작성시 validation
@@ -135,7 +135,7 @@ function toggleCommentEditForm(button) {
 }
 
 // 댓글 삭제
-function confirmDeleteComment(commentId) {
+function confirmDeleteComment(boardId, commentId) {
     var result = confirm('댓글을 삭제하시겠습니까?');
 
     // 사용자가 아니오를 클릭한경우
@@ -145,8 +145,23 @@ function confirmDeleteComment(commentId) {
     }
 
     // 사용자가 예를 클릭하면 삭제 작업 진행
-    alert('댓글이 삭제되었습니다');
-    location.href = '/comment/' + commentId + '/delete';
+    fetch('/comment/'+commentId+'/delete', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            boardId: boardId
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            window.alert('댓글이 삭제되었습니다');
+            return response.json();
+        }
+    })
+    .then(data => {
+        window.location.href = '/board/'+ boardId + '/posting/' + data.deletedCommentPostingId;
+    })
+    .catch(error => console.error('delete failed', error));
 }
 
 // 내정보 수정시 확인

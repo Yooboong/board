@@ -3,7 +3,7 @@
 
     <div id="content">
 
-        <form th:action="@{/posting/update}" th:object="${postingDto}" method="post" onsubmit="return postingEditValidation()">
+        <form th:action="@{'/board/'+${postingDto.boardId}+'/posting/update'}" th:object="${postingDto}" method="post" onsubmit="return postingEditValidation()">
             <input type="hidden" name="id" th:value="${postingDto.id}">
 
             <div class="mb-3">
@@ -20,7 +20,7 @@
 
             <div class="flex-container">
                 <button type="submit" class="btn btn-primary">완료</button>
-                <button type="button" class="btn btn-info btn-info-custom" th:onclick="|location.href='/posting/'+${postingDto.id}|">취소</button>
+                <button type="button" class="btn btn-info btn-info-custom" th:onclick="|location.href='/board/'+${postingDto.boardId}+'/posting/'+${postingDto.id}|">취소</button>
             </div>
         </form>
 

@@ -26,55 +26,36 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor // lombok을 사용한 생성자 주입 어노테이션
-@RequestMapping("/posting")
+@RequestMapping("/board")
 public class PostingController {
 
     private final PostingService postingService; // lombok을 사용한 생성자 주입시 final 추가
 
-    @GetMapping("/") // 메인 페이지 (페이징)
-    public String mainPage(@RequestParam(name = "page", defaultValue = "1") int page,
-                           @RequestParam(name = "keyword", defaultValue = "") String keyword,
-                           @RequestParam(name = "searchOption", defaultValue = "1") int searchOption,
-                           Model model) {
-        Page<PostingDto> postingDtoPage = postingService.getPage(page, keyword, searchOption);
-
-        int startPage = ((page - 1) / postingDtoPage.getSize()) * postingDtoPage.getSize() + 1;
-        int endPage = startPage + postingDtoPage.getSize() - 1;
-        if (endPage > postingDtoPage.getTotalPages()) {
-            endPage = postingDtoPage.getTotalPages();
-        }
-        int currentPage = page;
-        int lastPage = postingDtoPage.getTotalPages();
-
-        model.addAttribute("postingDtoPage", postingDtoPage);
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);
-        model.addAttribute("currentPage", currentPage);
-        model.addAttribute("lastPage", lastPage);
-        model.addAttribute("searchOption", searchOption);
-        return "mainpage";
-    }
-
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/new") // 글 생성 버튼 눌렀을 때
-    public String createForm(PostingDto postingDto) {
+    @GetMapping("/{boardId}/new") // 글 생성 버튼 눌렀을 때
+    public String createForm(@PathVariable("boardId") Long boardId,
+                             PostingDto postingDto,
+                             Model model) {
+        model.addAttribute("boardId", boardId);
         return "posting/new"; // 글 생성 페이지로 이동
     }
 
     @PreAuthorize("isAuthenticated()") // 로그인한 경우에만 실행, 로그인한 사용자만 호출가능
     // 로그아웃 상태에서 해당 어노테이션이 적용된 메소드가 호출되면, 로그인 페이지로 강제이동
-    @PostMapping("/create") // 글 생성
+    @PostMapping("/{boardId}/create") // 글 생성
     public String create(Principal principal,
+                         @PathVariable("boardId") Long boardId,
                          @Valid PostingDto postingDto,
                          BindingResult bindingResult,
                          Model model) {
         if (bindingResult.hasErrors()) { // 제목 및 내용을 작성하지 않은경우
+            model.addAttribute("boardId", boardId);
             model.addAttribute("postingDto", postingDto);
             return "posting/new";
         }
 
         PostingDto input = PostingDto.builder()
+                .boardId(boardId)
                 .title(postingDto.getTitle())
                 .content(postingDto.getContent())
                 .view(0)
@@ -82,10 +63,10 @@ public class PostingController {
 
         PostingDto created = postingService.create(principal.getName(), input);
 
-        return "redirect:/";
+        return "redirect:/board/" + boardId;
     }
 
-    @GetMapping("/{id}") // 게시글 조회
+    @GetMapping("/{boardId}/posting/{id}") // 게시글 조회
     public String show(@PathVariable("id") Long id,
                        Model model) {
         PostingDto postingDto = postingService.read(id);
@@ -97,7 +78,7 @@ public class PostingController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/{id}/edit") // 수정 시작
+    @GetMapping("/{boardId}/posting/{id}/edit") // 수정 시작
     public String editForm(Principal principal,
                            @PathVariable("id") Long id,
                            Model model) {
@@ -112,7 +93,7 @@ public class PostingController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/update") // 수정
+    @PostMapping("/{boardId}/posting/update") // 수정
     public String update(Principal principal,
                          @Valid PostingDto postingDto,
                          BindingResult bindingResult,
@@ -128,18 +109,20 @@ public class PostingController {
 
         PostingDto input = PostingDto.builder()
                 .id(postingDto.getId())
+                .boardId(postingDto.getBoardId())
                 .title(postingDto.getTitle())
                 .content(postingDto.getContent())
                 .build();
 
         PostingDto updated = postingService.update(postingDto.getId(), input);
 
-        return "redirect:/posting/" + postingDto.getId();
+        return "redirect:/board/" + postingDto.getBoardId() + "/posting/" + postingDto.getId();
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/{id}/delete") // 삭제
+    @GetMapping("/{boardId}/posting/{id}/delete") // 삭제
     public String delete(Principal principal,
+                         @PathVariable("boardId") Long boardId,
                          @PathVariable("id") Long id) {
         PostingDto target = postingService.read(id);
 
@@ -158,7 +141,7 @@ public class PostingController {
 
         postingService.delete(id);
 
-        return "redirect:/";
+        return "redirect:/board/" + boardId;
     }
 
 }

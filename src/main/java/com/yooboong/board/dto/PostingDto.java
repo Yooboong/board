@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 @Builder
 public class PostingDto {
     private Long id;
+    private Long boardId;
+
     private String username; // Principal.getName()과 비교하기위함 (계정 아이디에 해당)
     private String nickname; // 작성자 닉네임
 
@@ -42,6 +44,7 @@ public class PostingDto {
 
         return PostingDto.builder()
                 .id(entity.getId())
+                .boardId(entity.getBoard().getId())
                 .username(entity.getAuthor().getUsername())
                 .nickname(entity.getAuthor().getNickname())
                 .title(entity.getTitle())

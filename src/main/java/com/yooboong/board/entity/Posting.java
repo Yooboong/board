@@ -21,6 +21,10 @@ public class Posting extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "board_id")
+    private Board board;
+
+    @ManyToOne
     @JoinColumn(name = "author_id")
     private Account author;
 
@@ -36,8 +40,9 @@ public class Posting extends BaseTimeEntity {
     @OneToMany(mappedBy = "posting", cascade = CascadeType.REMOVE)
     private List<Comment> commentList;
 
-    public static Posting toEntity(Account account, PostingDto postingDto) {
+    public static Posting toEntity(Account account, Board board, PostingDto postingDto) {
         return Posting.builder()
+                .board(board)
                 .author(account)
                 .title(postingDto.getTitle())
                 .content(postingDto.getContent())

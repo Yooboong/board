@@ -5,6 +5,7 @@ import com.yooboong.board.entity.Board;
 import com.yooboong.board.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ public class BoardService {
         return boardDtoList;
     }
 
+    @Transactional
     public BoardDto create(BoardDto boardDto) {
         Board entity = Board.toEntity(boardDto);
         Board created = boardRepository.save(entity);
@@ -49,6 +51,7 @@ public class BoardService {
         return BoardDto.toDto(target);
     }
 
+    @Transactional
     public BoardDto update(BoardDto boardDto) {
         Board target = boardRepository.findById(boardDto.getId()).orElse(null);
         if (target == null)
@@ -59,6 +62,7 @@ public class BoardService {
         return BoardDto.toDto(updated);
     }
 
+    @Transactional
     public void delete(Long id) {
         Board target = boardRepository.findById(id).orElse(null);
         if (target == null)

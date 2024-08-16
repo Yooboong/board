@@ -2,8 +2,10 @@ package com.yooboong.board.service;
 
 import com.yooboong.board.dto.PostingDto;
 import com.yooboong.board.entity.Account;
+import com.yooboong.board.entity.Board;
 import com.yooboong.board.entity.Posting;
 import com.yooboong.board.repository.AccountRepository;
+import com.yooboong.board.repository.BoardRepository;
 import com.yooboong.board.repository.PostingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,22 +25,24 @@ public class PostingService {
 
     private final AccountRepository accountRepository;
 
+    private final BoardRepository boardRepository;
+
     private final PostingRepository postingRepository;
 
-    public Page<PostingDto> getPage(int page, String keyword, int searchOption) {
+    public Page<PostingDto> getPage(Long boardId, int page, String keyword, int searchOption) {
         Pageable pageable = PageRequest.of(page - 1, 10); // PageRequest 클래스에 실제로 들어갈 페이지 번호는 0부터
 
         Page<Posting> entityPage = null;
 
         switch (searchOption){
             case 1:
-                entityPage = postingRepository.findPageByTitleKeyword(keyword, pageable);
+                entityPage = postingRepository.findPageByTitleKeyword(boardId, keyword, pageable);
                 break;
             case 2:
-                entityPage = postingRepository.findPageByTitleAndContentKeyword(keyword, pageable);
+                entityPage = postingRepository.findPageByTitleAndContentKeyword(boardId, keyword, pageable);
                 break;
             case 3:
-                entityPage = postingRepository.findPageByAuthorKeyword(keyword, pageable);
+                entityPage = postingRepository.findPageByAuthorKeyword(boardId, keyword, pageable);
                 break;
         }
 
@@ -59,7 +63,11 @@ public class PostingService {
         if (account == null)
             throw new IllegalArgumentException("게시글 생성 실패! 계정이 존재하지 않음");
 
-        Posting postingEntity = Posting.toEntity(account, postingDto);
+        Board board = boardRepository.findById(postingDto.getBoardId()).orElse(null);
+        if (board == null)
+            throw new IllegalArgumentException("게시글 생성 실패! 게시판이 존재하지 않음");
+
+        Posting postingEntity = Posting.toEntity(account, board, postingDto);
 
         Posting created = postingRepository.save(postingEntity);
 

@@ -5,6 +5,7 @@ import com.yooboong.board.role.AccountRole;
 import com.yooboong.board.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,6 +18,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,6 +31,7 @@ public class CommentController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
     public String create(Principal principal,
+                         @RequestParam("boardId") Long boardId,
                          @RequestParam("postingId") Long postingId,
                          @RequestParam("comment") String comment) {
         CommentDto input = CommentDto.builder()
@@ -36,12 +40,13 @@ public class CommentController {
                 .build();
 
         CommentDto created = commentService.create(principal.getName(), postingId, input);
-        return "redirect:/posting/" + postingId;
+        return "redirect:/board/" + boardId + "/posting/" + postingId;
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/update")
     public String update(Principal principal,
+                         @RequestParam("boardId") Long boardId,
                          @RequestParam("id") Long id,
                          @RequestParam("comment") String comment) {
         CommentDto target = commentService.read(id);
@@ -57,13 +62,14 @@ public class CommentController {
 
         Long postingId = updated.getPostingId();
 
-        return "redirect:/posting/" + postingId;
+        return "redirect:/board/" + boardId + "/posting/" + postingId;
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/{id}/delete")
-    public String delete(Principal principal,
-                         @PathVariable("id") Long id) {
+    @PostMapping("/{id}/delete")
+    @ResponseBody
+    public ResponseEntity delete(Principal principal,
+                                 @PathVariable("id") Long id) {
         CommentDto target = commentService.read(id);
 
         // 권한이 관리자인 경우 삭제 가능하도록 구현
@@ -81,7 +87,10 @@ public class CommentController {
 
         Long deletedCommentPostingId = commentService.delete(id);
 
-        return "redirect:/posting/" + deletedCommentPostingId;
+        Map<String, Long> response = new HashMap<>(); // 삭제한 댓글의 게시글 id를 JSON타입으로 반환하기 위해 선언
+        response.put("deletedCommentPostingId", deletedCommentPostingId); // 삭제한 댓글의 게시글 id를 넣어줌
+
+        return ResponseEntity.ok(response);
     }
 
 }

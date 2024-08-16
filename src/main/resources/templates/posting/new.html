@@ -3,7 +3,7 @@
 
     <div id="content">
 
-        <form th:action="@{/posting/create}" th:object="${postingDto}" method="post" onsubmit="return postingValidation()">
+        <form th:action="@{'/board/'+${boardId}+'/create'}" th:object="${postingDto}" method="post" onsubmit="return postingValidation()">
             <div class="mb-3">
                 <label for="titleForm" class="form-label">제목</label>
                 <input type="text" class="form-control" th:field="*{title}" id="titleForm">
@@ -18,7 +18,7 @@
 
             <div class="flex-container">
                 <button type="submit" class="btn btn-primary">등록</button>
-                <button type="button" class="btn btn-info btn-info-custom" th:onclick="|location.href='/'|">취소</button>
+                <button type="button" class="btn btn-info btn-info-custom" th:onclick="|location.href='/board/'+${boardId}|">취소</button>
             </div>
         </form>
 

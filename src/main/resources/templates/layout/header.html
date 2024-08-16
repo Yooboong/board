@@ -19,7 +19,9 @@
     <nav id="nav">
         <div id="menu-bar">
             <ul>
-                <li></li>
+                <li th:each="board : ${boardList}">
+                    <a th:href="@{'/board/' + ${board.id}}" th:text="${board.name}"></a>
+                </li>
             </ul>
         </div>
 
@@ -29,6 +31,7 @@
         
         <div sec:authorize="isAuthenticated()" class="account-option">
             <span class="nickname" th:text="${#authentication.principal.nickname} + '님'"></span>
+            <a href="/board/manage" sec:authorize="hasRole('ROLE_ADMIN')" class="btn btn-warning btn-warning-custom">게시판 관리</a>
             <a href="/account" th:if="${#authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails)}" class="btn btn-primary">내정보</a>
             <a href="/logout" th:if="${#authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails)}" class="btn btn-danger">로그아웃</a>
 
