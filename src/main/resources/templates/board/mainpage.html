@@ -2,6 +2,7 @@
 <th:block layout:fragment="content">
 
     <div id="content">
+        <span th:text="${boardName}" style="font-weight: bold;"></span>
         <div id="search-post-div">
             <select class="form-select" id="search-option">
                 <option value="1" th:selected="${searchOption == 1}">제목</option>

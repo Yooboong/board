@@ -2,6 +2,7 @@ package com.yooboong.board.controller;
 
 import com.yooboong.board.dto.BoardDto;
 import com.yooboong.board.dto.PostingDto;
+import com.yooboong.board.entity.Board;
 import com.yooboong.board.service.BoardService;
 import com.yooboong.board.service.PostingService;
 import jakarta.validation.Valid;
@@ -31,6 +32,9 @@ public class BoardController {
                            @RequestParam(name = "keyword", defaultValue = "") String keyword,
                            @RequestParam(name = "searchOption", defaultValue = "1") int searchOption,
                            Model model) {
+        BoardDto board = boardService.getBoard(id);
+        String boardName = board.getName();
+
         Page<PostingDto> postingDtoPage = postingService.getPage(id, page, keyword, searchOption);
 
         int startPage = ((page - 1) / postingDtoPage.getSize()) * postingDtoPage.getSize() + 1;
@@ -42,6 +46,7 @@ public class BoardController {
         int lastPage = postingDtoPage.getTotalPages();
 
         model.addAttribute("boardId", id);
+        model.addAttribute("boardName", boardName);
         model.addAttribute("postingDtoPage", postingDtoPage);
         model.addAttribute("keyword", keyword);
         model.addAttribute("startPage", startPage);
