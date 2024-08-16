@@ -238,6 +238,45 @@ function confirmDeleteAccount(form) {
     return true;
 }
 
+// 게시판 생성
+function confirmCreateBoard(form) {
+    var name = form.querySelector('input[name="name"]').value.trim();
+
+    if (name == '') {
+        alert('게시판 이름을 입력하세요')
+        return false;
+    }
+
+    var result = confirm('게시판을 생성하시겠습니까?');
+
+    if (result == false) {
+        alert('게시판 생성이 취소되었습니다');
+        return false;
+    }
+
+    return true;
+}
+
+// 게시판 수정
+function confirmEditBoard(form) {
+    var name = form.querySelector('input[name="name"]').value.trim();
+
+    if (name == '') {
+        alert('게시판 이름을 입력하세요')
+        return false;
+    }
+
+    var result = confirm('게시판을 수정하시겠습니까?');
+
+    if (result == false) {
+        alert('게시판 수정이 취소되었습니다');
+        return false;
+    }
+
+    return true;
+}
+
+// 게시판 삭제
 function deleteBoard(button) {
     var result = confirm('정말 삭제하시겠습니까?');
 

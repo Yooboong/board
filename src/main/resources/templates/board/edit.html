@@ -9,7 +9,7 @@
                     <h4>게시판 수정</h4>
                 </div>
             </div>
-            <form th:action="@{/board/update}" th:object="${boardDto}" method="post">
+            <form th:action="@{/board/update}" th:object="${boardDto}" method="post" onsubmit="return confirmEditBoard(this)">
                 <div class="mb-3">
                     <label for="name" class="form-label">게시판 이름</label>
                     <input type="text" th:field="*{name}" id="name" class="form-control">

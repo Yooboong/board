@@ -9,7 +9,7 @@
                     <h4>게시판 생성</h4>
                 </div>
             </div>
-            <form th:action="@{/board/create}" th:object="${boardDto}" method="post">
+            <form th:action="@{/board/create}" th:object="${boardDto}" method="post" onsubmit="return confirmCreateBoard(this)">
                 <div class="mb-3">
                     <label for="name" class="form-label">게시판 이름</label>
                     <input type="text" th:field="*{name}" id="name" class="form-control">
